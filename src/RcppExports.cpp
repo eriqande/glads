@@ -20,3 +20,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_recombo_segregate
+IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, NumericVector rf);
+RcppExport SEXP gids_rcpp_recombo_segregate(SEXP GSEXP, SEXP dimsSEXP, SEXP rfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type G(GSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type rf(rfSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_recombo_segregate(G, dims, rf));
+    return rcpp_result_gen;
+END_RCPP
+}

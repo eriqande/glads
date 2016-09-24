@@ -1,17 +1,13 @@
-# second round from Tim.
-
 
 # The code here runs a simulation to explore how a range of processes can generate genomic patterns.
 # Motivated by the ideas in Sonya and Kristen's NERC and John Fell Fund grants.
 
-# This chunk of code will likely be moved to a different file, with the following functions that do the hard
-# work put in a separate file that is called from this one.
+# This version uses functions written in Rcpp which are a bit faster
 
 # First, clear workspace and graphics
 rm(list=ls())
 graphics.off()
-# load required libraries
-library(plyr)
+
 
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
@@ -27,18 +23,7 @@ initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N
   return(struct)
 }
 
-# make the phenotype
-g2p.map                 <- function(pop.struct,bvs,n.loci.t,ve){
-  temp <- dim(pop.struct)
-  mat <- matrix(1:temp[2],temp[1],temp[2],byrow=TRUE)
-  loci.n <- array(mat,c(temp[1],temp[2],2))
-  new.n <- (pop.struct-1)*n.loci.t+loci.n
-  bvv <- as.vector(bvs) # turn to bvs
-  outp <- array(bvv[new.n],c(temp[1],temp[2],2))
-  z <- apply(outp,1,sum)-n.loci.t+rnorm(temp[1],0,ve)
-  sex <- sample(c(1,2),temp[1],TRUE)
-  return(cbind(z,sex))
-}
+
 
 # estimate fitness
 fitness <- function(z,n){
@@ -71,29 +56,12 @@ mating <- function(fitn, struct){
   return(list(mum.stru,dad.stru))
 }
 
-# makes a gamete from a genotype
-recombine <- function(genotype){
-  temp <- dim(genotype)
-  i <- sample(c(1,2),1,FALSE)
-  j <- if (i==1) j <- 2 else j <- 1
-  x <- c(genotype[,i],genotype[,j])
-  ra <- runif(temp[1]) # this is the probability of recombining at a locus
-  re <- ifelse(ra>0.995,1,0)
-  re <- cumsum(re)
-  re <- (re %% 2)+1
-  xx <- 1:temp[1]
-  gamete <- x[ifelse(re==1,xx,xx+100)]
-  return(gamete)
-}
-
 
 start <- struct     <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 res <- rep(NA,2000)
 
-#profvis({
-for (i in 1:2000){
-  #zs         <- g2p.map(struct,bv.for.alleles,n.loci,V.e)
 
+for (i in 1:2000) {
   zs <- rcpp_g2p_map(struct, dim(struct), bv.for.alleles, n.loci, V.e)
 
   res[i]     <- mean(zs[,1])
@@ -101,25 +69,13 @@ for (i in 1:2000){
   fits       <- cbind(zs,fitness(zs,dim(zs)[1]))
   pairs      <- mating(fits,struct)
   mums       <- pairs[[1]]
-  #mum.genos  <- alply(mums,1)
   dads       <- pairs[[2]]
-
-  #dad.genos  <- alply(dads,1)
-  #mum.eggs   <- lapply(mum.genos,recombine)
-  #dad.sperm  <- lapply(dad.genos,recombine)
-  #off1       <- matrix(unlist(mum.eggs),ncol=n.loci,byrow=TRUE)
-  #off2       <- matrix(unlist(dad.sperm),ncol=n.loci,byrow=TRUE)
-  #struct     <- array(NA,c(dim(off1),2))
-  #struct[,,1]     <- off1
-  #struct[,,2]     <- off2
 
   struct     <- array(NA, dim(mums))
   struct[,,1]     <- rcpp_recombo_segregate(mums, dim(mums), rep(0.005, dim(mums)[2] - 1))
   struct[,,2]     <- rcpp_recombo_segregate(dads, dim(dads), rep(0.005, dim(dads)[2] - 1))
-
-
 }
-#})
+
 
 
 x <- 1:2000

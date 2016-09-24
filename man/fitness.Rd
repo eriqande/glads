@@ -2,11 +2,13 @@
 % Please edit documentation in R/gid_funcs.R
 \name{fitness}
 \alias{fitness}
-\title{estimate fitness given phenotype}
+\title{estimate fitness given phenotype
+#@export}
 \usage{
 fitness(z, n, sigma)
 }
 \description{
 estimate fitness given phenotype
+#@export
 }
 

@@ -10,6 +10,8 @@ g2p.map(pop.struct, bvs, n.loci.t, ve)
 \item{pop.struct}{a structure holding the population members.  A 3-D array subscripted by indivs, loci, gene-copies}
 
 \item{bvs}{array of breeding values.  an array with n.loci rows and number of columns equal to number of alleles.}
+
+\item{n.loci.t}{#@export}
 }
 \description{
 This maps genotype to phenotype

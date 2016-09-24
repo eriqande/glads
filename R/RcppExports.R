@@ -3,7 +3,8 @@
 
 #' rcpp version of g2p.map to see how it fares speedwise
 #'
-#' Just a reimplementation using Rcpp
+#' Just a reimplementation using Rcpp.  This returns a matrix.  The first column
+#' are the phenotype values and the second column are the sexes.
 #' @param G the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy
 #' @param dims the dimensions of the 3-D array G for internal use.
 #' @param bvs matrix of the breeding values, indexed by loci and alleles
@@ -12,5 +13,20 @@
 #' @export
 rcpp_g2p_map <- function(G, dims, bvs, num_loci_t, v_e) {
     .Call('gids_rcpp_g2p_map', PACKAGE = 'gids', G, dims, bvs, num_loci_t, v_e)
+}
+
+#' rcpp version of function that does recombination and segregation
+#'
+#' Note that this is hard-wired for diploidy.
+#' @param G the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy
+#' @param dims the dimensions of the 3-D array G for internal use.
+#' @param rf vector of recombination fractions.  There should be one minus the number of loci. The first
+#' one corresponds to recombination between the first and the second marker.  These are the probabilities
+#' of a recombination between the markers during a meiosis.
+#' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
+#' the genotype struct.
+#' @export
+rcpp_recombo_segregate <- function(G, dims, rf) {
+    .Call('gids_rcpp_recombo_segregate', PACKAGE = 'gids', G, dims, rf)
 }
 

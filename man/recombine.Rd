@@ -9,5 +9,6 @@ recombine(genotype)
 \description{
 the genotype is given as a matrix of alleles.  First column is the first haplotype and the second
 column is the second haplotype.
+#@export
 }
 

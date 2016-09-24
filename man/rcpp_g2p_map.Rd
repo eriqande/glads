@@ -18,6 +18,7 @@ rcpp_g2p_map(G, dims, bvs, num_loci_t, v_e)
 \item{v_e}{the environmental variance in the phenotype}
 }
 \description{
-Just a reimplementation using Rcpp
+Just a reimplementation using Rcpp.  This returns a matrix.  The first column
+are the phenotype values and the second column are the sexes.
 }
 

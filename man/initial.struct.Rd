@@ -11,7 +11,8 @@ initial.struct(n.N1, n.l, n.a.l)
 
 \item{n.l}{Number of loci}
 
-\item{n.a.l}{Number of alleles at each locus.  Just set as a single scalar for all the loci right now.}
+\item{n.a.l}{Number of alleles at each locus.  Just set as a single scalar for all the loci right now.
+#@export}
 }
 \description{
 fill in initial values
