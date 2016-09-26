@@ -2,4 +2,5 @@
 
 export(rcpp_g2p_map)
 export(rcpp_recombo_segregate)
+importFrom(Rcpp,evalCpp)
 useDynLib(gids)
