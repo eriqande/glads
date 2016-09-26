@@ -7,7 +7,7 @@
 # First, clear workspace and graphics
 rm(list=ls())
 graphics.off()
-
+library(gids)
 
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
