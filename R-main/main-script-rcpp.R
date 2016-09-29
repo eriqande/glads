@@ -9,13 +9,15 @@ rm(list=ls())
 graphics.off()
 library(gids)
 library(abind)
-
+library(parallel)
+library(progress)
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
 n.loci                  <- 1000 # how many linked genes we will deal with
 n.alleles.per.locus     <- 5   # we will assume that each locus has the same number of alleles to start with
 bv.for.alleles          <- t(array(1:5,c(n.alleles.per.locus,n.loci)))/4-0.25
 V.e                     <- 0.1 # standard deviation in environmental component of the phenotype
+n.gens                  <- 100 # number of generations.
 
 # a function to generate the initial population structure
 initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N loci, n.a.l - alleles / locus
@@ -63,49 +65,45 @@ dispersal <- function(pop1,pop2,rate1to2,rate2to1){
   return(list(p1,p2))
 }
 
-start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
-res.1 <- res.2 <- rep(NA,2000)
-
-
-for (i in 1:2000) {
-  zs.1        <- rcpp_g2p_map(struct.1, dim(struct.1), bv.for.alleles, n.loci, V.e)
-  zs.2        <- rcpp_g2p_map(struct.2, dim(struct.2), bv.for.alleles, n.loci, V.e)
-  res.1[i]    <- mean(zs.1[,1])
-  res.2[i]    <- mean(zs.2[,1])
-  n1          <- dim(zs.1)[1]
-  n2          <- dim(zs.2)[1]
-  xx          <- paste(i,' ',res.1[i],' ',res.2[i],' ',n1,' ',n2,'\n')
-  cat(xx)
-  #  w <- round(2 + 0.2*z-0.005*z2-0.01*n + rnorm(n,0,1),0)
-  fits.1      <- cbind(zs.1,fitness(zs.1,dim(zs.1)[1],2,0.2,-0.005,-0.01,1))
-  pairs.1     <- mating(fits.1,struct.1)
-  mums.1      <- pairs.1[[1]]
-  dads.1      <- pairs.1[[2]]
-  struct.1    <- array(NA, dim(mums.1))
-  struct.1[,,1] <- rcpp_recombo_segregate(mums.1, dim(mums.1), rep(0.005, dim(mums.1)[2] - 1))
-  struct.1[,,2] <- rcpp_recombo_segregate(dads.1, dim(dads.1), rep(0.005, dim(dads.1)[2] - 1))
-
-  fits.2      <- cbind(zs.2,fitness(zs.2,dim(zs.2)[1],1,0.1,-0.002,-0.00001,1))
-  pairs.2     <- mating(fits.2,struct.2)
-  mums.2      <- pairs.2[[1]]
-  dads.2      <- pairs.2[[2]]
-  struct.2    <- array(NA, dim(mums.2))
-  struct.2[,,1] <- rcpp_recombo_segregate(mums.2, dim(mums.2), rep(0.005, dim(mums.2)[2] - 1))
-  struct.2[,,2] <- rcpp_recombo_segregate(dads.2, dim(dads.2), rep(0.005, dim(dads.2)[2] - 1))
-
-  out <- dispersal(struct.1,struct.2,0.05,0.01)
-  struct.1 <- out[[1]]
-  struct.2 <- out[[2]]
+doer <- function(x){
+  struct <- x[[1]]
+  bvs <- x[[2]]
+  nloc <- x[[3]]
+  ve <- x[[4]]
+  b0 <- x[[5]]
+  b1 <- x[[6]]
+  b2 <- x[[7]]
+  b3 <- x[[8]]
+  epsil <- x[[9]]
+  zs            <- rcpp_g2p_map(struct, dim(struct), bvs, nloc, ve)
+  fits           <- cbind(zs,fitness(zs,dim(zs)[1],b0,b1,b2,b3,epsil))
+  pairs          <- mating(fits,struct)
+  mums           <- pairs[[1]]
+  dads           <- pairs[[2]]
+  struct.rt      <- array(NA, dim(mums))
+  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), rep(0.005, dim(mums)[2] - 1))
+  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), rep(0.005, dim(dads)[2] - 1))
+  return(struct.rt)
 }
 
 
+pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
+pb <- tkProgressBar(title = "progress bar", min = 0, max = n.gens, width = 300)
+start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+
+res <- list()
 
 
-
-
-
-
-
-x <- 1:2000
-plot(x,res.1,xlab='Generation',ylab='Mean phenotype',type='l')
-lines(x,res.2,col='red')
+for (i in 1:n.gens){
+  x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
+  x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
+  x <- list(x1,x2)
+  out <- mclapply(x,doer)
+  struct.1 <- out[[1]]
+  struct.2 <- out[[2]]
+  outd <- dispersal(struct.1,struct.2,0.001,0.001)
+  struct.1 <- outd[[1]]
+  struct.2 <- outd[[2]]
+  if (i %% 10==0) res[i/10] <- list(struct.1,struct.2)
+  pb$tick()
+}
