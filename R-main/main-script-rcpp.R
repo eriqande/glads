@@ -11,8 +11,10 @@ library(gids)
 library(abind)
 library(parallel)
 library(progress)
-library(tcltk)
-library(profvis)
+# library(tcltk)
+# library(profvis)
+library(ggplot2)
+library(dplyr)
 
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
@@ -58,7 +60,7 @@ dispersal <- function(pop1,pop2,rate1to2,rate2to1){
   pops.comb <- abind(pop1,pop2,along=1)
   n1 <- dim(pop1)[1]
   n2 <- dim(pop2)[1]
-  #p1 <- rep(1,n1)
+  #p1 <- rep(1,n1)  # eca commented this out since it behaved differently with respect to seeds...weird...
   #p2 <- rep(2,n2)
   p1 <- ifelse(runif(n1)<rate1to2,2,1)
   p2 <- ifelse(runif(n2)<rate2to1,1,2)
@@ -97,30 +99,41 @@ doer <- function(x){
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 
 res <- list()
+res[["0"]] <- list(struct.1, struct.2)
 
 n.gens <- 50
 
-profvis({
-  for (i in 1:n.gens){
-    x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
-    x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
-    x <- list(x1,x2)
-    out <- mclapply(x,doer)
-    struct.1 <- out[[1]]
-    struct.2 <- out[[2]]
-    set.seed(i)
-    outd <- dispersal(struct.1,struct.2,0.1,0.1)
+for (i in 1:n.gens){
+  x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
+  x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
+  x <- list(x1,x2)
+  out <- mclapply(x,doer)
+  struct.1 <- out[[1]]
+  struct.2 <- out[[2]]
 
-    set.seed(i)
-    out2 <- fast_dispersal(struct.1,struct.2,0.1,0.1)
-    print(c(i, dim(outd[[1]]), dim(outd[[2]]), dim(out2[[1]]), dim(out2[[2]])))
-    print(c(i, all(outd[[1]]==out2[[1]]), all(outd[[2]]==out2[[2]])))
-    print(i)
-    struct.1 <- outd[[1]]
-    struct.2 <- outd[[2]]
-    if (i %% 10==0) res[[i/10]] <- list(struct.1,struct.2)
-    #pb$tick()
-  }
-})
+  outd <- fast_dispersal(struct.1,struct.2,0.001,0.001)
+
+  print(i)
+  struct.1 <- outd[[1]]
+  struct.2 <- outd[[2]]
+  if (i %% 10==0) res[[paste(i)]] <- list(struct.1,struct.2)
+  #pb$tick()
+}
 
 
+# then compute Fst at every locus every 10 generations (that were stored)
+# (usig the pegas package....takes a ridiculous amount of time...silly!)
+fst_df <- lapply(res, function(x) fst_at_loci(x[[1]], x[[2]])) %>%
+  bind_rows(.id = "generation")
+
+fst_df %>%
+  group_by(generation) %>%
+  summarise(mean_fst = mean(Fst))
+
+tmp <- fst_df %>%
+  tidyr::separate(locus, into = c("dump", "pos")) %>%
+  mutate(pos = as.numeric(pos))
+
+
+ggplot(tmp, aes(x = pos, y = Fst, colour = generation)) +
+  geom_point()
