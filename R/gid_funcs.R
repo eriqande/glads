@@ -54,3 +54,27 @@ recombine <- function(genotype){
   return(gamete)
 }
 
+
+#' disperal function that avoids slow abind
+#'
+#' blah
+#' @param pop1 pop struct 1
+#' @param pop2 pop struct 2
+#' @param rate1to2  rate at which indivs in pop1 migrate to pop2
+#' @param rate2tp1 rate at which indivds in pop2 migrate to pop1
+#' @return Returns a list of pop structs
+#' @export
+fast_dispersal <- function(pop1,pop2,rate1to2,rate2to1){
+  n1 <- dim(pop1)[1]
+  n2 <- dim(pop2)[1]
+  L <- dim(pop1)[2]
+  g <- 2
+  p1 <- ifelse(runif(n1)<rate1to2,2,1)
+  p2 <- ifelse(runif(n2)<rate2to1,1,2)
+
+  ret <- rcpp_dispersal_placement(pop1, pop2, dim(pop1), dim(pop2), p1, p2);
+  dim(ret[[1]]) <- c(sum(c(p1, p2)==1), L, g)
+  dim(ret[[2]]) <- c(sum(c(p1, p2)==2), L, g)
+
+  ret
+}

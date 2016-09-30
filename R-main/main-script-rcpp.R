@@ -11,6 +11,10 @@ library(gids)
 library(abind)
 library(parallel)
 library(progress)
+# library(profvis)
+library(ggplot2)
+library(dplyr)
+
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
 n.loci                  <- 200 # how many linked genes we will deal with
@@ -53,15 +57,14 @@ dispersal <- function(pop1,pop2,rate1to2,rate2to1){
   pops.comb <- abind(pop1,pop2,along=1)
   n1 <- dim(pop1)[1]
   n2 <- dim(pop2)[1]
-  p1 <- rep(1,n1)
-  p2 <- rep(2,n2)
-  p1 <- ifelse(runif(n1)<rate1to2,p2,p1)
-  p2 <- ifelse(runif(n2)<rate2to1,p1,p2)
+  p1 <- ifelse(runif(n1)<rate1to2,2,1)
+  p2 <- ifelse(runif(n2)<rate2to1,1,2)
   ps <- c(p1,p2)
   p1 <- pops.comb[ps==1,,]
   p2 <- pops.comb[ps==2,,]
   return(list(p1,p2))
 }
+
 
 doer <- function(x){
   struct <- x[[1]]
@@ -84,12 +87,15 @@ doer <- function(x){
   return(struct.rt)
 }
 
-
 pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 
 res <- list()
-mean.z
+
+start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+
+res <- list()
+res[["0"]] <- list(struct.1, struct.2)
 
 for (i in 1:n.gens){
   x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
@@ -98,10 +104,10 @@ for (i in 1:n.gens){
   out <- mclapply(x,doer)
   struct.1 <- out[[1]]
   struct.2 <- out[[2]]
-  outd <- dispersal(struct.1,struct.2,0,0)
+  outd <- fast_dispersal(struct.1,struct.2,0.01,0.01)
   struct.1 <- outd[[1]]
   struct.2 <- outd[[2]]
-  if (i %% 10==0) res[[i/10]] <- list(struct.1,struct.2)
+  if (i %% 10==0) res[[paste(i)]] <- list(struct.1,struct.2)
   pb$tick()
 }
 
@@ -136,4 +142,29 @@ for (i in 1:length(res)){
 
 plot(1:n.loci,dist[,length(res)],type='l')
 mean(dist[,length(res)])*n.loci/2
-(mean.z[150,1]-mean.z[150,2])
+
+
+
+
+
+# then compute Fst at every locus every 10 generations (that were stored)
+# (usig the pegas package....takes a ridiculous amount of time...silly!)
+fst_df <- lapply(res, function(x) fst_at_loci(x[[1]], x[[2]])) %>%
+  bind_rows(.id = "generation")
+
+fst_df %>%
+  mutate(generation = as.numeric(generation)) %>%
+  group_by(generation) %>%
+  summarise(mean_fst = mean(Fst,na.rm=TRUE)) %>% as.data.frame
+
+
+tmp <- fst_df %>%
+  tidyr::separate(locus, into = c("dump", "pos")) %>%
+  mutate(pos = as.numeric(pos))
+
+
+ggplot(tmp, aes(x = pos, y = Fst, colour = generation)) +
+  geom_point()
+
+
+plot(1:200,as.vector(fst_df[fst_df$generation=='1500',3]))

@@ -8,6 +8,9 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
 Imports:
+    dplyr,
+    magrittr,
+    pegas,
     Rcpp (>= 0.12.7)
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1

@@ -82,3 +82,71 @@ IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, Numeri
 
   return(ret);
 }
+
+
+//' dispersal function in rcpp
+//'
+//' a quick rcpp based implementation because the abind in the R implementation
+//' gobbles up a lot of time.  For this you just pass in a vector for pop1 and a vector for
+//' pop2 that says where each individual goes.  That way we can do the individual selection
+//' outside of this function.
+//' @param P1 first pop struct, indexed by indiv, locus, gene copy
+//' @param P2 second pop struct
+//' @param d1 dim of first pop struct
+//' @param d2 dim of second pop struct
+//' @param a1 assignments of individuals in pop 1 to either pop 1 or 2
+//' @param a2 assignments of individuals in pop 2 to either pop 1 or 2
+//' @export
+// [[Rcpp::export]]
+List rcpp_dispersal_placement(IntegerVector P1, IntegerVector P2, IntegerVector d1, IntegerVector d2, IntegerVector a1, IntegerVector a2) {
+
+#define I(i,l,g,N)     g * (N * L) + l * N + i
+  int i,l,g;
+  int N1, N2;
+  int r1 = 0, r2 = 0;  // for subscripting into the ret arrays
+
+  int L = d1[1];  // number of loci
+  int GC = 2;  // number of gene copies
+  int I1 = d1[0]; // number of indivs in struct 1
+  int I2 = d2[0];
+
+  N1 = sum(a1 == 1) + sum(a2 == 1);
+  N2 = sum(a1 == 2) + sum(a2 == 2);
+
+  IntegerVector ret1(N1 * L * GC);
+  IntegerVector ret2(N2 * L * GC);
+
+
+  // shuffle off the critters from Pop1
+  for(i=0;i<I1;i++) {
+    if(a1[i]==1) {
+      for(l=0;l<L;l++) {
+        for(g=0;g<2;g++) ret1[I(r1,l,g,N1)] = P1[I(i,l,g,I1)];
+      }
+      r1++;
+    } else {
+      for(l=0;l<L;l++) {
+        for(g=0;g<2;g++) ret2[I(r2,l,g,N2)] = P1[I(i,l,g,I1)];
+      }
+      r2++;
+    }
+  }
+
+  // and then the ones from Pop2
+  for(i=0;i<I2;i++) {
+    if(a2[i]==1) {
+      for(l=0;l<L;l++) {
+        for(g=0;g<2;g++) ret1[I(r1,l,g,N1)] = P2[I(i,l,g,I2)];
+      }
+      r1++;
+    } else {
+      for(l=0;l<L;l++) {
+        for(g=0;g<2;g++) ret2[I(r2,l,g,N2)] = P2[I(i,l,g,I2)];
+      }
+      r2++;
+    }
+  }
+
+  return(List::create(ret1, ret2));
+}
+
