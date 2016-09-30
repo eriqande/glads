@@ -16,8 +16,9 @@ initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHE
 n.loci                  <- 1000 # how many linked genes we will deal with
 n.alleles.per.locus     <- 5   # we will assume that each locus has the same number of alleles to start with
 bv.for.alleles          <- t(array(1:5,c(n.alleles.per.locus,n.loci)))/4-0.25
+#bv.for.alleles          <-
 V.e                     <- 0.1 # standard deviation in environmental component of the phenotype
-n.gens                  <- 100 # number of generations.
+n.gens                  <- 1000 # number of generations.
 
 # a function to generate the initial population structure
 initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N loci, n.a.l - alleles / locus
@@ -25,8 +26,6 @@ initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N
   struct              <- array(rand.ints,c(n.N1,n.l,2)) # an array
   return(struct)
 }
-
-
 
 # estimate fitness
 fitness <- function(z,n,b0,b1,b2,b3,epsilon){
@@ -75,35 +74,62 @@ doer <- function(x){
   b2 <- x[[7]]
   b3 <- x[[8]]
   epsil <- x[[9]]
-  zs            <- rcpp_g2p_map(struct, dim(struct), bvs, nloc, ve)
+  zs             <- rcpp_g2p_map(struct, dim(struct), bvs, nloc, ve)
   fits           <- cbind(zs,fitness(zs,dim(zs)[1],b0,b1,b2,b3,epsil))
   pairs          <- mating(fits,struct)
   mums           <- pairs[[1]]
   dads           <- pairs[[2]]
   struct.rt      <- array(NA, dim(mums))
-  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), rep(0.005, dim(mums)[2] - 1))
-  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), rep(0.005, dim(dads)[2] - 1))
+  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), rep(0.001, dim(mums)[2] - 1))
+  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), rep(0.001, dim(dads)[2] - 1))
   return(struct.rt)
 }
 
 
 pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
-pb <- tkProgressBar(title = "progress bar", min = 0, max = n.gens, width = 300)
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 
 res <- list()
-
+mean.z
 
 for (i in 1:n.gens){
   x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
-  x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
+  x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.005,1)
   x <- list(x1,x2)
   out <- mclapply(x,doer)
   struct.1 <- out[[1]]
   struct.2 <- out[[2]]
-  outd <- dispersal(struct.1,struct.2,0.001,0.001)
+  outd <- dispersal(struct.1,struct.2,0,0)
   struct.1 <- outd[[1]]
   struct.2 <- outd[[2]]
-  if (i %% 10==0) res[i/10] <- list(struct.1,struct.2)
+  if (i %% 10==0) res[[i/10]] <- list(struct.1,struct.2)
   pb$tick()
 }
+
+pb <- progress_bar$new(format = " Calculating summary shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
+dist <- array(NA,c(n.loci,length(res)))
+mean.z <- array(NA,c(length(res),2))
+var.z <- array(NA,c(length(res),2))
+for (i in 1:length(res)){
+  dist[,i] <- apply(res[[i]][[1]],2,mean)-apply(res[[i]][[2]],2,mean)
+  z1 <- rcpp_g2p_map(res[[i]][[1]], dim(res[[i]][[1]]), bv.for.alleles, n.loci, V.e)
+  z2 <- rcpp_g2p_map(res[[i]][[2]], dim(res[[i]][[2]]), bv.for.alleles, n.loci, V.e)
+  mean.z[i,1] <- mean(z1[,1])
+  mean.z[i,2] <- mean(z2[,1])
+  var.z[i,1]  <- var(z1[,1])
+  var.z[i,2]  <- var(z2[,1])
+  pb$tick()
+}
+
+quartz()
+par(mfrow=c(2,2))
+x <- (1:length(res))*10
+
+plot(x,mean.z[,1],type='l',ylim=range(mean.z),xlab='Generation',ylab='Mean phenotype')
+lines(x,mean.z[,2],col='red')
+plot(x,var.z[,1],type='l',ylim=range(var.z),xlab='Generation',ylab='Phenotypic variance')
+lines(x,var.z[,2],col='red')
+
+
+plot(1:n.loci,dist[,length(res)],type='l')
+mean(dist[,length(res)])
