@@ -11,6 +11,7 @@ library(gids)
 library(abind)
 library(parallel)
 library(progress)
+library(tcltk)
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
 n.loci                  <- 1000 # how many linked genes we will deal with
