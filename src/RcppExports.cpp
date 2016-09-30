@@ -33,6 +33,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// breakpoints1
+IntegerVector breakpoints1(int chr_len, double rate);
+RcppExport SEXP gids_breakpoints1(SEXP chr_lenSEXP, SEXP rateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type chr_len(chr_lenSEXP);
+    Rcpp::traits::input_parameter< double >::type rate(rateSEXP);
+    rcpp_result_gen = Rcpp::wrap(breakpoints1(chr_len, rate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_recombo_segregate_expo
+IntegerVector rcpp_recombo_segregate_expo(IntegerVector G, IntegerVector dims, IntegerVector pos, int chromo_length);
+RcppExport SEXP gids_rcpp_recombo_segregate_expo(SEXP GSEXP, SEXP dimsSEXP, SEXP posSEXP, SEXP chromo_lengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type G(GSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type pos(posSEXP);
+    Rcpp::traits::input_parameter< int >::type chromo_length(chromo_lengthSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_recombo_segregate_expo(G, dims, pos, chromo_length));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_dispersal_placement
 List rcpp_dispersal_placement(IntegerVector P1, IntegerVector P2, IntegerVector d1, IntegerVector d2, IntegerVector a1, IntegerVector a2);
 RcppExport SEXP gids_rcpp_dispersal_placement(SEXP P1SEXP, SEXP P2SEXP, SEXP d1SEXP, SEXP d2SEXP, SEXP a1SEXP, SEXP a2SEXP) {

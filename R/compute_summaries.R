@@ -71,6 +71,20 @@ fst_at_loci <- function(P1, P2) {
 }
 
 
+#' at each of the loci compute Fst
+#'
+#' uses pegas
+#' @inheritParams struct2pegas
+#' @export
+fst_at_loci_with_pos <- function(P1, P2, pos) {
+  dat <- struct2pegas(P1, P2)
+  fst <- pegas::Fst(dat)
+  dplyr::data_frame(locus = rownames(fst), pos = pos, Fst = fst[,"Fst"], Fit = fst[,"Fit"], Fis = fst[, "Fis"])
+
+}
+
+
+
 #' convert the two population "struct"s to a data frame of loci that the hierfstat package can use
 #'
 #' This will work as long as there are not more than 9 alleles. Probably will never end

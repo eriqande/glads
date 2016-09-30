@@ -84,6 +84,80 @@ IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, Numeri
 }
 
 
+
+//' simple function to return crossover points from an exponential
+//'
+//' we could swap this out for something more complicated with varying rates and
+//' inversions fairly easily.
+//' @param chr_len  the length of the chromosome in base pairs
+//' @param rate  the rate of recombination per base pair (like 1/10^6)
+//' @export
+// [[Rcpp::export]]
+IntegerVector breakpoints1(int chr_len, double rate) {
+
+  int tot=0, expy;
+  std::vector<int> ret;
+  while(tot < chr_len) {
+    expy = floor(rexp(1, rate)[0]);
+    tot += expy;
+    ret.push_back(tot);
+  }
+  return(wrap(ret));
+
+}
+
+
+//' rcpp version of function that does recombination and segregation with exponential crossovers
+//'
+//' In this version, we have to have a position for each locus (an integer less than 2^31) and then we have
+//' crossing over points exponentially distributed as a Poisson process.  Mean crossover distance is 10^8 base pairs,
+//' but that could be changed so that crossovers happen at a variable rate.   Note that this is hard-wired for diploidy.
+//' @param G the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy
+//' @param dims the dimensions of the 3-D array G for internal use.
+//' @param pos vector of positions of the loci.  This is an integer vector.  Has to be in sorted order (ascending)
+//' @param chromo_length total chromoome length in base pairs
+//' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
+//' the genotype struct.
+//' @export
+// [[Rcpp::export]]
+IntegerVector rcpp_recombo_segregate_expo(IntegerVector G, IntegerVector dims, IntegerVector pos, int chromo_length) {
+  int i,l,b, bl;  // for subscripting individual, locus
+  int Ni = dims[0];
+  int Nl = dims[1];
+  int gam; // to say which gamete to choose (0 or 1)
+  int nBreaks;
+  int nb;
+
+
+  IntegerVector breaks;  // to store recombination comparison variables
+  IntegerVector ret(Ni * Nl, 0);  // allocate to the vector to return the gametes
+
+  for(i=0; i<Ni; i++) {
+    breaks = breakpoints1(chromo_length, 1.0/100000000.0);
+    nBreaks = breaks.size(); /* store how many breaks there are */
+    nb = nBreaks;
+
+    gam = runif(1)[0] < 0.5;  // this sets the haplotype we start segregating from
+
+    for(l=0; l<Nl; l++) {
+      /* if number of breakoints that are > than the position changes, then we change gam. */
+      for(b=0,bl=0 ;b<nBreaks; b++)  if(pos[l] < breaks[b]) bl++;
+      if(bl < nb) {
+        gam = (gam + (nb - bl)) % 2;  // note if two crossovers have occurred, there is no recomb.  nb-bl takes care of those even crossover numbers...
+        nb = bl;
+      }
+      //Rcpp::Rcout << "indiv " << i << "  locus " << l << " pos[l] " << pos[l] << " gam " << gam << "  breaks  " << breaks << std::endl;
+      ret[l*Ni + i] =  G[gam * (Ni*Nl) + l*(Ni) + i];
+    }
+  }
+
+  return(ret);
+}
+
+
+
+
+
 //' dispersal function in rcpp
 //'
 //' a quick rcpp based implementation because the abind in the R implementation

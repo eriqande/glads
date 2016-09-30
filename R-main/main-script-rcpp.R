@@ -17,11 +17,13 @@ library(dplyr)
 
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
-n.loci                  <- 200 # how many linked genes we will deal with
+n.loci                  <- 100 # how many linked genes we will deal with
+chromo_mb               <- 2e08
+loci.pos                <- sort(floor(runif(n.loci, min = 0, max = chromo_mb)))  # randomly sprinkle the loci along a chromo_mb Mb chromosom
 n.alleles.per.locus     <- 5   # we will assume that each locus has the same number of alleles to start with
 bv.for.alleles          <- t(array(1:5,c(n.alleles.per.locus,n.loci)))/4-0.25
 V.e                     <- 0.01 # standard deviation in environmental component of the phenotype
-n.gens                  <- 1500 # number of generations.
+n.gens                  <- 150 # number of generations.
 
 # a function to generate the initial population structure
 initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N loci, n.a.l - alleles / locus
@@ -82,8 +84,13 @@ doer <- function(x){
   mums           <- pairs[[1]]
   dads           <- pairs[[2]]
   struct.rt      <- array(NA, dim(mums))
-  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), rep(0.001, dim(mums)[2] - 1))
-  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), rep(0.001, dim(dads)[2] - 1))
+
+
+#  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), rep(0.001, dim(mums)[2] - 1))
+#  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), rep(0.001, dim(dads)[2] - 1))
+
+  struct.rt[,,1] <- rcpp_recombo_segregate_expo(mums, dim(mums), loci.pos, chromo_mb)
+  struct.rt[,,2] <- rcpp_recombo_segregate_expo(dads, dim(dads), loci.pos, chromo_mb)
   return(struct.rt)
 }
 
@@ -93,6 +100,13 @@ start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.
 res <- list()
 
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+
+
+# testing out the expy_recombo
+#pos <- sort(as.integer(floor(runif(n.loci, min = 0, max = 2e08))))
+#rcpp_recombo_segregate_expo(struct.1, dim(struct.1), pos, 2e08)
+
+
 
 res <- list()
 res[["0"]] <- list(struct.1, struct.2)
@@ -149,16 +163,14 @@ mean(dist[,length(res)])*n.loci/2
 
 # then compute Fst at every locus every 10 generations (that were stored)
 # (usig the pegas package....takes a ridiculous amount of time...silly!)
-fst_df <- lapply(res, function(x) fst_at_loci(x[[1]], x[[2]])) %>%
+fst_df <- lapply(res, function(x) fst_at_loci_with_pos(x[[1]], x[[2]], loci.pos)) %>%
   bind_rows(.id = "generation") %>%
   mutate(generation = as.numeric(generation))
 
 
 # plot the Fst values across loci on the last iteration
 last_gen <- fst_df %>%
-  filter(generation == max(generation)) %>%
-  tidyr::separate(locus, into = c("loc", "pos")) %>%
-  mutate(pos = as.numeric(pos))
+  filter(generation == max(generation))
 
 ggplot(last_gen, aes(x = pos, y = Fst)) +
   geom_point() +
