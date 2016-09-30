@@ -150,21 +150,20 @@ mean(dist[,length(res)])*n.loci/2
 # then compute Fst at every locus every 10 generations (that were stored)
 # (usig the pegas package....takes a ridiculous amount of time...silly!)
 fst_df <- lapply(res, function(x) fst_at_loci(x[[1]], x[[2]])) %>%
-  bind_rows(.id = "generation")
-
-fst_df %>%
-  mutate(generation = as.numeric(generation)) %>%
-  group_by(generation) %>%
-  summarise(mean_fst = mean(Fst,na.rm=TRUE)) %>% as.data.frame
+  bind_rows(.id = "generation") %>%
+  mutate(generation = as.numeric(generation))
 
 
-tmp <- fst_df %>%
-  tidyr::separate(locus, into = c("dump", "pos")) %>%
+# plot the Fst values across loci on the last iteration
+last_gen <- fst_df %>%
+  filter(generation == max(generation)) %>%
+  tidyr::separate(locus, into = c("loc", "pos")) %>%
   mutate(pos = as.numeric(pos))
 
+ggplot(last_gen, aes(x = pos, y = Fst)) +
+  geom_point() +
+  geom_line()
 
-ggplot(tmp, aes(x = pos, y = Fst, colour = generation)) +
-  geom_point()
 
 
-plot(1:200,as.vector(fst_df[fst_df$generation=='1500',3]))
+#plot(1:200,as.vector(fst_df[fst_df$generation=='1500',3]))
