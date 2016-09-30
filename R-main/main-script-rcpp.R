@@ -13,17 +13,16 @@ library(parallel)
 library(progress)
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
-n.loci                  <- 1000 # how many linked genes we will deal with
+n.loci                  <- 200 # how many linked genes we will deal with
 n.alleles.per.locus     <- 5   # we will assume that each locus has the same number of alleles to start with
 bv.for.alleles          <- t(array(1:5,c(n.alleles.per.locus,n.loci)))/4-0.25
-#bv.for.alleles          <-
-V.e                     <- 0.1 # standard deviation in environmental component of the phenotype
-n.gens                  <- 1000 # number of generations.
+V.e                     <- 0.01 # standard deviation in environmental component of the phenotype
+n.gens                  <- 1500 # number of generations.
 
 # a function to generate the initial population structure
 initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N loci, n.a.l - alleles / locus
-  rand.ints           <- sample(1:n.a.l,n.N1*n.l*2,TRUE)
-  struct              <- array(rand.ints,c(n.N1,n.l,2)) # an array
+  rand.ints             <- sample(1:n.a.l,n.N1*n.l*2,TRUE)
+  struct                <- array(rand.ints,c(n.N1,n.l,2)) # an array
   return(struct)
 }
 
@@ -130,6 +129,11 @@ lines(x,mean.z[,2],col='red')
 plot(x,var.z[,1],type='l',ylim=range(var.z),xlab='Generation',ylab='Phenotypic variance')
 lines(x,var.z[,2],col='red')
 
+goat <- rep(NA,length(res))
+for (i in 1:length(res)){
+  goat[i] <- mean(dist[,i])
+}
 
 plot(1:n.loci,dist[,length(res)],type='l')
-mean(dist[,length(res)])
+mean(dist[,length(res)])*n.loci/2
+(mean.z[150,1]-mean.z[150,2])
