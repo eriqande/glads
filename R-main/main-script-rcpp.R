@@ -12,6 +12,8 @@ library(abind)
 library(parallel)
 library(progress)
 library(tcltk)
+library(profvis)
+
 # Higher level parameters that the user will set to run the simulation
 initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
 n.loci                  <- 1000 # how many linked genes we will deal with
@@ -56,15 +58,16 @@ dispersal <- function(pop1,pop2,rate1to2,rate2to1){
   pops.comb <- abind(pop1,pop2,along=1)
   n1 <- dim(pop1)[1]
   n2 <- dim(pop2)[1]
-  p1 <- rep(1,n1)
-  p2 <- rep(2,n2)
-  p1 <- ifelse(runif(n1)<rate1to2,p2,p1)
-  p2 <- ifelse(runif(n2)<rate2to1,p1,p2)
+  #p1 <- rep(1,n1)
+  #p2 <- rep(2,n2)
+  p1 <- ifelse(runif(n1)<rate1to2,2,1)
+  p2 <- ifelse(runif(n2)<rate2to1,1,2)
   ps <- c(p1,p2)
   p1 <- pops.comb[ps==1,,]
   p2 <- pops.comb[ps==2,,]
   return(list(p1,p2))
 }
+
 
 doer <- function(x){
   struct <- x[[1]]
@@ -88,23 +91,36 @@ doer <- function(x){
 }
 
 
-pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
-pb <- tkProgressBar(title = "progress bar", min = 0, max = n.gens, width = 300)
+#pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
+#pb <- tkProgressBar(title = "progress bar", min = 0, max = n.gens, width = 300)
+
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 
 res <- list()
 
+n.gens <- 50
 
-for (i in 1:n.gens){
-  x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
-  x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
-  x <- list(x1,x2)
-  out <- mclapply(x,doer)
-  struct.1 <- out[[1]]
-  struct.2 <- out[[2]]
-  outd <- dispersal(struct.1,struct.2,0.001,0.001)
-  struct.1 <- outd[[1]]
-  struct.2 <- outd[[2]]
-  if (i %% 10==0) res[i/10] <- list(struct.1,struct.2)
-  pb$tick()
-}
+profvis({
+  for (i in 1:n.gens){
+    x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,2,0.2,-0.005,-0.01,1)
+    x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,1.5,0.1,-0.002,-0.001,1)
+    x <- list(x1,x2)
+    out <- mclapply(x,doer)
+    struct.1 <- out[[1]]
+    struct.2 <- out[[2]]
+    set.seed(i)
+    outd <- dispersal(struct.1,struct.2,0.1,0.1)
+
+    set.seed(i)
+    out2 <- fast_dispersal(struct.1,struct.2,0.1,0.1)
+    print(c(i, dim(outd[[1]]), dim(outd[[2]]), dim(out2[[1]]), dim(out2[[2]])))
+    print(c(i, all(outd[[1]]==out2[[1]]), all(outd[[2]]==out2[[2]])))
+    print(i)
+    struct.1 <- outd[[1]]
+    struct.2 <- outd[[2]]
+    if (i %% 10==0) res[[i/10]] <- list(struct.1,struct.2)
+    #pb$tick()
+  }
+})
+
+

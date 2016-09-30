@@ -30,3 +30,20 @@ rcpp_recombo_segregate <- function(G, dims, rf) {
     .Call('gids_rcpp_recombo_segregate', PACKAGE = 'gids', G, dims, rf)
 }
 
+#' dispersal function in rcpp
+#'
+#' a quick rcpp based implementation because the abind in the R implementation
+#' gobbles up a lot of time.  For this you just pass in a vector for pop1 and a vector for
+#' pop2 that says where each individual goes.  That way we can do the individual selection
+#' outside of this function.
+#' @param P1 first pop struct, indexed by indiv, locus, gene copy
+#' @param P2 second pop struct
+#' @param d1 dim of first pop struct
+#' @param d2 dim of second pop struct
+#' @param a1 assignments of individuals in pop 1 to either pop 1 or 2
+#' @param a2 assignments of individuals in pop 2 to either pop 1 or 2
+#' @export
+rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
+    .Call('gids_rcpp_dispersal_placement', PACKAGE = 'gids', P1, P2, d1, d2, a1, a2)
+}
+

@@ -33,3 +33,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_dispersal_placement
+List rcpp_dispersal_placement(IntegerVector P1, IntegerVector P2, IntegerVector d1, IntegerVector d2, IntegerVector a1, IntegerVector a2);
+RcppExport SEXP gids_rcpp_dispersal_placement(SEXP P1SEXP, SEXP P2SEXP, SEXP d1SEXP, SEXP d2SEXP, SEXP a1SEXP, SEXP a2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type P1(P1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type P2(P2SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type d1(d1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type d2(d2SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type a1(a1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type a2(a2SEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_dispersal_placement(P1, P2, d1, d2, a1, a2));
+    return rcpp_result_gen;
+END_RCPP
+}
