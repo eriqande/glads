@@ -74,3 +74,16 @@ rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
     .Call('gids_rcpp_dispersal_placement', PACKAGE = 'gids', P1, P2, d1, d2, a1, a2)
 }
 
+#' read ms-formatted MaCS output into a matrix of haplotypes.
+#'
+#' This is implemented in Rcpp for speed.  It is designed to read a single replicate coalescent
+#' simulation in macs' msformatter format and convert the 0/1's to 1/2's and return in a big integer
+#' matrix of haplotypes that can then be put together as desired later. (i.e. different pops and into
+#' different diploid individuals)
+#' @param Input the path to the mac | msformatter output file to read in. Note that
+#' tilde expansion will not occur on this path
+#' @export
+read_macs_output <- function(Input) {
+    .Call('gids_read_macs_output', PACKAGE = 'gids', Input)
+}
+

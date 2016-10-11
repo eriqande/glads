@@ -75,3 +75,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_macs_output
+List read_macs_output(CharacterVector Input);
+RcppExport SEXP gids_read_macs_output(SEXP InputSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type Input(InputSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_macs_output(Input));
+    return rcpp_result_gen;
+END_RCPP
+}
