@@ -11,6 +11,7 @@ Imports:
     dplyr,
     magrittr,
     pegas,
-    Rcpp (>= 0.12.7)
+    Rcpp (>= 0.12.7),
+    readr
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1

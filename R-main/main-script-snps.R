@@ -23,7 +23,7 @@ initial.population.size <- 200 # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHE
 n.loci                  <- 100 # how many linked genes we will deal with
 chromo_mb               <- 2e08
 loci.pos                <- sort(floor(runif(n.loci, min = 0, max = chromo_mb)))  # randomly sprinkle the loci along a chromo_mb Mb chromosom
-n.alleles.per.locus     <- 5   # we will assume that each locus has the same number of alleles to start with
+n.alleles.per.locus     <- 2   # we will assume that each locus has the same number of alleles to start with
 bv.for.alleles          <- t(array(1:5,c(n.alleles.per.locus,n.loci)))/4-0.25
 V.e                     <- 0.01 # standard deviation in environmental component of the phenotype
 n.gens                  <- 150 # number of generations.
@@ -128,6 +128,8 @@ for (i in 1:n.gens){
   pb$tick()
 }
 
+
+#### HERE IS TIM'S STUFF FOR LOOKING AT TRENDS IN THE PHENOTYPE ####
 pb <- progress_bar$new(format = " Calculating summary shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
 dist <- array(NA,c(n.loci,length(res)))
 mean.z <- array(NA,c(length(res),2))
@@ -163,7 +165,7 @@ mean(dist[,length(res)])*n.loci/2
 
 
 
-
+#### OLD USELESS FST CALC STUFF MARKED FOR REMOVAL ####
 # then compute Fst at every locus every 10 generations (that were stored)
 # (usig the pegas package....takes a ridiculous amount of time...silly!)
 fst_df <- lapply(res, function(x) fst_at_loci_with_pos(x[[1]], x[[2]], loci.pos)) %>%
@@ -182,3 +184,12 @@ ggplot(last_gen, aes(x = pos, y = Fst)) +
 
 
 #plot(1:200,as.vector(fst_df[fst_df$generation=='1500',3]))
+
+#### COMPUTE FST WITH PLINK ####
+fst_df <- lapply(res, function(x) fst_via_plink(x, loci.pos)) %>%
+  dplyr::bind_rows(.id = "generation") %>%
+  mutate(generation = as.numeric(generation))
+
+ggplot(fst_df, aes(x = POS, y = FST)) +
+  geom_line() +
+  facet_wrap(~generation)
