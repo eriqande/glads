@@ -233,6 +233,9 @@ p <- ggplot(fst_df2, aes(x = POS, y = FST, frame = generation)) +
   geom_point(size = 0.05) +
   geom_line(mapping = aes(x = POS, y = 4*dens), colour = "red")
 
+
+# you gotta do:  devtools::install_github("dgrtwo/gganimate") to get this one.
 library(gganimate)
 
-gg_animate(p)
+gganimate(p, "chromo_sim.html")
+
