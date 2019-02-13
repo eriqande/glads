@@ -12,7 +12,7 @@
 #' @param v_e the environmental variance in the phenotype
 #' @export
 rcpp_g2p_map <- function(G, dims, bvs, num_loci_t, v_e) {
-    .Call('gids_rcpp_g2p_map', PACKAGE = 'gids', G, dims, bvs, num_loci_t, v_e)
+    .Call('_gids_rcpp_g2p_map', PACKAGE = 'gids', G, dims, bvs, num_loci_t, v_e)
 }
 
 #' rcpp version of function that does recombination and segregation
@@ -27,7 +27,7 @@ rcpp_g2p_map <- function(G, dims, bvs, num_loci_t, v_e) {
 #' the genotype struct.
 #' @export
 rcpp_recombo_segregate <- function(G, dims, rf) {
-    .Call('gids_rcpp_recombo_segregate', PACKAGE = 'gids', G, dims, rf)
+    .Call('_gids_rcpp_recombo_segregate', PACKAGE = 'gids', G, dims, rf)
 }
 
 #' simple function to return crossover points from an exponential
@@ -38,23 +38,24 @@ rcpp_recombo_segregate <- function(G, dims, rf) {
 #' @param rate  the rate of recombination per base pair (like 1/10^6)
 #' @export
 breakpoints1 <- function(chr_len, rate) {
-    .Call('gids_breakpoints1', PACKAGE = 'gids', chr_len, rate)
+    .Call('_gids_breakpoints1', PACKAGE = 'gids', chr_len, rate)
 }
 
 #' rcpp version of function that does recombination and segregation with exponential crossovers
 #'
 #' In this version, we have to have a position for each locus (an integer less than 2^31) and then we have
-#' crossing over points exponentially distributed as a Poisson process.  Mean crossover distance is 10^8 base pairs,
+#' crossing over points exponentially distributed as a Poisson process.
 #' but that could be changed so that crossovers happen at a variable rate.   Note that this is hard-wired for diploidy.
 #' @param G the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy
 #' @param dims the dimensions of the 3-D array G for internal use.
 #' @param pos vector of positions of the loci.  This is an integer vector.  Has to be in sorted order (ascending)
 #' @param chromo_length total chromoome length in base pairs
+#' @param cross mean crossover distance by base pairs
 #' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
 #' the genotype struct.
 #' @export
-rcpp_recombo_segregate_expo <- function(G, dims, pos, chromo_length) {
-    .Call('gids_rcpp_recombo_segregate_expo', PACKAGE = 'gids', G, dims, pos, chromo_length)
+rcpp_recombo_segregate_expo <- function(G, dims, pos, chromo_length, cross) {
+    .Call('_gids_rcpp_recombo_segregate_expo', PACKAGE = 'gids', G, dims, pos, chromo_length, cross)
 }
 
 #' dispersal function in rcpp
@@ -71,7 +72,7 @@ rcpp_recombo_segregate_expo <- function(G, dims, pos, chromo_length) {
 #' @param a2 assignments of individuals in pop 2 to either pop 1 or 2
 #' @export
 rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
-    .Call('gids_rcpp_dispersal_placement', PACKAGE = 'gids', P1, P2, d1, d2, a1, a2)
+    .Call('_gids_rcpp_dispersal_placement', PACKAGE = 'gids', P1, P2, d1, d2, a1, a2)
 }
 
 #' read ms-formatted MaCS output into a matrix of haplotypes.
@@ -84,6 +85,6 @@ rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
 #' tilde expansion will not occur on this path
 #' @export
 read_macs_output <- function(Input) {
-    .Call('gids_read_macs_output', PACKAGE = 'gids', Input)
+    .Call('_gids_read_macs_output', PACKAGE = 'gids', Input)
 }
 

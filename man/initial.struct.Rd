@@ -17,4 +17,3 @@ initial.struct(n.N1, n.l, n.a.l)
 \description{
 fill in initial values
 }
-

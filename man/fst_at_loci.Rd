@@ -14,4 +14,3 @@ fst_at_loci(P1, P2)
 \description{
 uses pegas
 }
-

@@ -14,4 +14,4 @@ Imports:
     Rcpp (>= 0.12.7),
     readr
 LinkingTo: Rcpp
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1

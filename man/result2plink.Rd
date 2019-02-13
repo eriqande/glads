@@ -17,4 +17,3 @@ carried by the indivs}
 \description{
 The just assumes that everything is on chromosom 1.
 }
-

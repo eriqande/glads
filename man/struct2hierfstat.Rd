@@ -15,4 +15,3 @@ struct2hierfstat(P1, P2)
 This will work as long as there are not more than 9 alleles. Probably will never end
 up using this as hierfstat makes a very SLOW calculation of Fst.
 }
-

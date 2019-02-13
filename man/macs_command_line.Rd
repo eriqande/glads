@@ -4,8 +4,8 @@
 \alias{macs_command_line}
 \title{prepare a macs command line to run with system}
 \usage{
-macs_command_line(num = 200, length = 1e+07, A = list(t = "0.0001", r =
-  "0.001", h = "100"), output = "haplotypes.txt")
+macs_command_line(num = 200, length = 1e+07, A = list(t = "0.0001", r
+  = "0.001", h = "100"), output = "haplotypes.txt")
 }
 \arguments{
 \item{num}{number of sequences to simulate}
@@ -43,4 +43,3 @@ dim(haps$mat)
 # see how many of those variants are singletons
 sum(colSums(haps$mat-1) == 1)
 }
-

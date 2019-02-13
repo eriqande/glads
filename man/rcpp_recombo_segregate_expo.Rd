@@ -24,4 +24,3 @@ In this version, we have to have a position for each locus (an integer less than
 crossing over points exponentially distributed as a Poisson process.  Mean crossover distance is 10^8 base pairs,
 but that could be changed so that crossovers happen at a variable rate.   Note that this is hard-wired for diploidy.
 }
-
