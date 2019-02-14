@@ -1,5 +1,6 @@
 #' My package documentation
-#' … bla bla …
+#'
+#' Need to add more here.
 #' @name gids
 #' @docType package
 #' @importFrom Rcpp evalCpp
