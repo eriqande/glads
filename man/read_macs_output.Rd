@@ -16,4 +16,3 @@ simulation in macs' msformatter format and convert the 0/1's to 1/2's and return
 matrix of haplotypes that can then be put together as desired later. (i.e. different pops and into
 different diploid individuals)
 }
-

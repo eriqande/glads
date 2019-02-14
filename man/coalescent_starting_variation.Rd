@@ -4,8 +4,8 @@
 \alias{coalescent_starting_variation}
 \title{simulate starting variation for the simulation}
 \usage{
-coalescent_starting_variation(n = 100, bp = 1e+06, rho = 1, Ne = 10000,
-  S = 1000, h = 100)
+coalescent_starting_variation(n = 100, bp = 1e+06, rho = 1,
+  Ne = 10000, S = 1000, h = 100)
 }
 \arguments{
 \item{n}{the number of sequences (2 times the number of diploid individuals you will want)}
@@ -33,4 +33,3 @@ the length of the sequence in base pairs and the desired number of SNPs.  It ass
 by default that recombination rate is 1 cM per megabase.  You set the effective size
 so that we can scale things as necessary by 4Ne.
 }
-

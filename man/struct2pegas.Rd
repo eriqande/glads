@@ -22,4 +22,3 @@ This will work as long as there are not more than 9 alleles.
 
 This should work with any number of alleles
 }
-

@@ -15,4 +15,3 @@ breakpoints1(chr_len, rate)
 we could swap this out for something more complicated with varying rates and
 inversions fairly easily.
 }
-

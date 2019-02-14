@@ -94,7 +94,7 @@ doer <- function(x){
   return(struct.rt)
 }
 
-pb <- progress_bar$new(format = " Doing its shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
+pb <- progress_bar$new(format = " Work in progress [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
 start.1 <- struct.1 <- start.2 <- struct.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
 
 res <- list()
@@ -125,7 +125,7 @@ for (i in 1:n.gens){
   pb$tick()
 }
 
-pb <- progress_bar$new(format = " Calculating summary shit [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
+pb <- progress_bar$new(format = " Calculating summary statistics [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
 dist <- array(NA,c(n.loci,length(res)))
 mean.z <- array(NA,c(length(res),2))
 var.z <- array(NA,c(length(res),2))

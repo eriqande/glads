@@ -16,4 +16,3 @@ g2p.map(pop.struct, bvs, n.loci.t, ve)
 \description{
 This maps genotype to phenotype
 }
-

@@ -11,4 +11,3 @@ the genotype is given as a matrix of alleles.  First column is the first haploty
 column is the second haplotype.
 #@export
 }
-
