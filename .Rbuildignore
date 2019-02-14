@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^junk$
+^manuscript$
+^R-main$
+^README\.md$
+^tempR$
