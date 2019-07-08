@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // rcpp_g2p_map
 NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double num_loci_t, double v_e);
-RcppExport SEXP _gids_rcpp_g2p_map(SEXP GSEXP, SEXP dimsSEXP, SEXP bvsSEXP, SEXP num_loci_tSEXP, SEXP v_eSEXP) {
+RcppExport SEXP _glads_rcpp_g2p_map(SEXP GSEXP, SEXP dimsSEXP, SEXP bvsSEXP, SEXP num_loci_tSEXP, SEXP v_eSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,7 +22,7 @@ END_RCPP
 }
 // rcpp_recombo_segregate
 IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, NumericVector rf);
-RcppExport SEXP _gids_rcpp_recombo_segregate(SEXP GSEXP, SEXP dimsSEXP, SEXP rfSEXP) {
+RcppExport SEXP _glads_rcpp_recombo_segregate(SEXP GSEXP, SEXP dimsSEXP, SEXP rfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,7 +35,7 @@ END_RCPP
 }
 // breakpoints1
 IntegerVector breakpoints1(int chr_len, double rate);
-RcppExport SEXP _gids_breakpoints1(SEXP chr_lenSEXP, SEXP rateSEXP) {
+RcppExport SEXP _glads_breakpoints1(SEXP chr_lenSEXP, SEXP rateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // rcpp_recombo_segregate_expo
 IntegerVector rcpp_recombo_segregate_expo(IntegerVector G, IntegerVector dims, IntegerVector pos, int chromo_length, double cross);
-RcppExport SEXP _gids_rcpp_recombo_segregate_expo(SEXP GSEXP, SEXP dimsSEXP, SEXP posSEXP, SEXP chromo_lengthSEXP, SEXP crossSEXP) {
+RcppExport SEXP _glads_rcpp_recombo_segregate_expo(SEXP GSEXP, SEXP dimsSEXP, SEXP posSEXP, SEXP chromo_lengthSEXP, SEXP crossSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,7 @@ END_RCPP
 }
 // rcpp_dispersal_placement
 List rcpp_dispersal_placement(IntegerVector P1, IntegerVector P2, IntegerVector d1, IntegerVector d2, IntegerVector a1, IntegerVector a2);
-RcppExport SEXP _gids_rcpp_dispersal_placement(SEXP P1SEXP, SEXP P2SEXP, SEXP d1SEXP, SEXP d2SEXP, SEXP a1SEXP, SEXP a2SEXP) {
+RcppExport SEXP _glads_rcpp_dispersal_placement(SEXP P1SEXP, SEXP P2SEXP, SEXP d1SEXP, SEXP d2SEXP, SEXP a1SEXP, SEXP a2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -78,7 +78,7 @@ END_RCPP
 }
 // read_macs_output
 List read_macs_output(CharacterVector Input);
-RcppExport SEXP _gids_read_macs_output(SEXP InputSEXP) {
+RcppExport SEXP _glads_read_macs_output(SEXP InputSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -89,16 +89,16 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_gids_rcpp_g2p_map", (DL_FUNC) &_gids_rcpp_g2p_map, 5},
-    {"_gids_rcpp_recombo_segregate", (DL_FUNC) &_gids_rcpp_recombo_segregate, 3},
-    {"_gids_breakpoints1", (DL_FUNC) &_gids_breakpoints1, 2},
-    {"_gids_rcpp_recombo_segregate_expo", (DL_FUNC) &_gids_rcpp_recombo_segregate_expo, 5},
-    {"_gids_rcpp_dispersal_placement", (DL_FUNC) &_gids_rcpp_dispersal_placement, 6},
-    {"_gids_read_macs_output", (DL_FUNC) &_gids_read_macs_output, 1},
+    {"_glads_rcpp_g2p_map", (DL_FUNC) &_glads_rcpp_g2p_map, 5},
+    {"_glads_rcpp_recombo_segregate", (DL_FUNC) &_glads_rcpp_recombo_segregate, 3},
+    {"_glads_breakpoints1", (DL_FUNC) &_glads_breakpoints1, 2},
+    {"_glads_rcpp_recombo_segregate_expo", (DL_FUNC) &_glads_rcpp_recombo_segregate_expo, 5},
+    {"_glads_rcpp_dispersal_placement", (DL_FUNC) &_glads_rcpp_dispersal_placement, 6},
+    {"_glads_read_macs_output", (DL_FUNC) &_glads_read_macs_output, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_gids(DllInfo *dll) {
+RcppExport void R_init_glads(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

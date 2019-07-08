@@ -10,7 +10,7 @@
 # First, clear workspace and graphics
 rm(list=ls())
 graphics.off()
-library(gids)
+library(glads)
 library(abind)
 library(parallel)
 library(progress)

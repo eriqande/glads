@@ -12,7 +12,7 @@
 #' @param v_e the environmental variance in the phenotype
 #' @export
 rcpp_g2p_map <- function(G, dims, bvs, num_loci_t, v_e) {
-    .Call('_gids_rcpp_g2p_map', PACKAGE = 'gids', G, dims, bvs, num_loci_t, v_e)
+    .Call('_glads_rcpp_g2p_map', PACKAGE = 'glads', G, dims, bvs, num_loci_t, v_e)
 }
 
 #' rcpp version of function that does recombination and segregation
@@ -27,7 +27,7 @@ rcpp_g2p_map <- function(G, dims, bvs, num_loci_t, v_e) {
 #' the genotype struct.
 #' @export
 rcpp_recombo_segregate <- function(G, dims, rf) {
-    .Call('_gids_rcpp_recombo_segregate', PACKAGE = 'gids', G, dims, rf)
+    .Call('_glads_rcpp_recombo_segregate', PACKAGE = 'glads', G, dims, rf)
 }
 
 #' simple function to return crossover points from an exponential
@@ -38,7 +38,7 @@ rcpp_recombo_segregate <- function(G, dims, rf) {
 #' @param rate  the rate of recombination per base pair (like 1/10^6)
 #' @export
 breakpoints1 <- function(chr_len, rate) {
-    .Call('_gids_breakpoints1', PACKAGE = 'gids', chr_len, rate)
+    .Call('_glads_breakpoints1', PACKAGE = 'glads', chr_len, rate)
 }
 
 #' rcpp version of function that does recombination and segregation with exponential crossovers
@@ -55,7 +55,7 @@ breakpoints1 <- function(chr_len, rate) {
 #' the genotype struct.
 #' @export
 rcpp_recombo_segregate_expo <- function(G, dims, pos, chromo_length, cross) {
-    .Call('_gids_rcpp_recombo_segregate_expo', PACKAGE = 'gids', G, dims, pos, chromo_length, cross)
+    .Call('_glads_rcpp_recombo_segregate_expo', PACKAGE = 'glads', G, dims, pos, chromo_length, cross)
 }
 
 #' dispersal function in rcpp
@@ -72,7 +72,7 @@ rcpp_recombo_segregate_expo <- function(G, dims, pos, chromo_length, cross) {
 #' @param a2 assignments of individuals in pop 2 to either pop 1 or 2
 #' @export
 rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
-    .Call('_gids_rcpp_dispersal_placement', PACKAGE = 'gids', P1, P2, d1, d2, a1, a2)
+    .Call('_glads_rcpp_dispersal_placement', PACKAGE = 'glads', P1, P2, d1, d2, a1, a2)
 }
 
 #' read ms-formatted MaCS output into a matrix of haplotypes.
@@ -85,6 +85,6 @@ rcpp_dispersal_placement <- function(P1, P2, d1, d2, a1, a2) {
 #' tilde expansion will not occur on this path
 #' @export
 read_macs_output <- function(Input) {
-    .Call('_gids_read_macs_output', PACKAGE = 'gids', Input)
+    .Call('_glads_read_macs_output', PACKAGE = 'glads', Input)
 }
 

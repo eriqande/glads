@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^inst$
+^R/macs-interface\.R$
+^R/plink-interface\.R$

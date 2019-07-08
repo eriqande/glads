@@ -1,7 +1,7 @@
 #' My package documentation
 #' … bla bla …
-#' @name gids
+#' @name glads
 #' @docType package
 #' @importFrom Rcpp evalCpp
-#' @useDynLib gids
+#' @useDynLib glads
 NULL

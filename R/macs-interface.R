@@ -13,7 +13,7 @@ macs_path <- function() {
   else {
     if(.Platform$OS.type=="unix") {
       if(Sys.info()["sysname"]=="Darwin") {
-        path <- file.path(system.file(package="gids"), "bin/macs")
+        path <- file.path(system.file(package="glads"), "bin/macs")
       } else {
         stop("Linux not currently supported")
       }
@@ -28,7 +28,7 @@ macs_path <- function() {
 #' path to the msformatter executable
 #'
 #' blab blah
-#' @export
+#' #@export
 msformatter_path <- function() {
   if(.Platform$OS.type=="windows") {
     stop("Windows not supported")
@@ -36,7 +36,7 @@ msformatter_path <- function() {
   else {
     if(.Platform$OS.type=="unix") {
       if(Sys.info()["sysname"]=="Darwin") {
-        path <- file.path(system.file(package="gids"), "bin/msformatter")
+        path <- file.path(system.file(package="glads"), "bin/msformatter")
       } else {
         stop("Linux not currently supported")
       }

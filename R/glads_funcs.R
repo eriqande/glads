@@ -4,7 +4,7 @@
 #' @param n.N1 Number of individuals in population 1
 #' @param n.l Number of loci
 #' @param n.a.l Number of alleles at each locus.  Just set as a single scalar for all the loci right now.
-#' #@export
+#' @export
 initial.struct <- function(n.N1, n.l, n.a.l) {
   rand.ints           <- sample(1:n.a.l, n.N1 * n.l * 2, replace = TRUE) # alleles at each locus equifrequent
   struct              <- array(rand.ints, c(n.N1, n.l, 2)) # a 3-D array

@@ -4,7 +4,7 @@
 \alias{rcpp_recombo_segregate_expo}
 \title{rcpp version of function that does recombination and segregation with exponential crossovers}
 \usage{
-rcpp_recombo_segregate_expo(G, dims, pos, chromo_length)
+rcpp_recombo_segregate_expo(G, dims, pos, chromo_length, cross)
 }
 \arguments{
 \item{G}{the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy}
@@ -14,6 +14,8 @@ rcpp_recombo_segregate_expo(G, dims, pos, chromo_length)
 \item{pos}{vector of positions of the loci.  This is an integer vector.  Has to be in sorted order (ascending)}
 
 \item{chromo_length}{total chromoome length in base pairs}
+
+\item{cross}{mean crossover distance by base pairs}
 }
 \value{
 The return value is a long vector that can be squished into a matrix as appropriate to put it into
@@ -21,6 +23,6 @@ the genotype struct.
 }
 \description{
 In this version, we have to have a position for each locus (an integer less than 2^31) and then we have
-crossing over points exponentially distributed as a Poisson process.  Mean crossover distance is 10^8 base pairs,
+crossing over points exponentially distributed as a Poisson process.
 but that could be changed so that crossovers happen at a variable rate.   Note that this is hard-wired for diploidy.
 }
