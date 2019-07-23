@@ -2,19 +2,19 @@
 using namespace Rcpp;
 
 
-
-//' rcpp version of g2p.map to see how it fares speedwise
+//' Phenotype function from C++
 //'
-//' Just a reimplementation using Rcpp.  This returns a matrix.  The first column
-//' are the phenotype values and the second column are the sexes.
-//' @param G the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy
-//' @param dims the dimensions of the 3-D array G for internal use.
-//' @param bvs matrix of the breeding values, indexed by loci and alleles
-//' @param num_loci_t  the number of loci, essentially something to get the mean Z to be 0
-//' @param v_e the environmental variance in the phenotype
+//' A function for the computation of additive phenotypes
+//' @param G An object of class \code{"struct"} with the genetic structure of each individual in the population.
+//' @param dims A vector with the dimensions of the 3-D array G.
+//' @param bvs A matrix with the breeding values, indexed by loci and alleles
+//' @param add_loci A vector with the position of additive loci participating in the computation of phenotypes.
+//' @param sex_ratio A numerical value defining the sex ratio of populations
+//' @param e_v A numerical value defining the environmental variance in the computation of phenotypes.
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
-NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double num_loci_t, double v_e) {
+NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double add_loci, double sex_ratio, double e_v) {
 
   int i,l,a;  // for subscripting individual, locus, gene copy
   int Ni = dims[0];
@@ -33,13 +33,13 @@ NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bv
         sum += bvs(l, G[a*(Ni*Nl) + l*(Ni) + i] - 1);
       }
     }
-    ret[i] = sum - num_loci_t;
+    ret[i] = sum - add_loci;
   }
 
-  ret = ret + rnorm(Ni, 0, v_e);
+  ret = ret + rnorm(Ni, 0, e_v);
 
   retmat(_, 0) = ret;  // make the first column of the return matrix be z, the phenotype
-  retmat(_, 1) = (runif(Ni) < 0.5) + 1;  // make the second column of the return be sex
+  retmat(_, 1) = (runif(Ni) < sex_ratio) + 1;  // make the second column of the return be sex
   colnames(retmat) = CharacterVector::create("z", "sex");
 
   return(retmat);
@@ -58,6 +58,7 @@ NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bv
 //' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
 //' the genotype struct.
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
 IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, NumericVector rf) {
   int i,l;  // for subscripting individual, locus
@@ -92,6 +93,7 @@ IntegerVector rcpp_recombo_segregate(IntegerVector G, IntegerVector dims, Numeri
 //' @param chr_len  the length of the chromosome in base pairs
 //' @param rate  the rate of recombination per base pair (like 1/10^6)
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
 IntegerVector breakpoints1(int chr_len, double rate) {
 
@@ -120,6 +122,7 @@ IntegerVector breakpoints1(int chr_len, double rate) {
 //' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
 //' the genotype struct.
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
 IntegerVector rcpp_recombo_segregate_expo(IntegerVector G, IntegerVector dims, IntegerVector pos, int chromo_length, double cross) {
   int i,l,b, bl;  // for subscripting individual, locus
@@ -171,6 +174,7 @@ IntegerVector rcpp_recombo_segregate_expo(IntegerVector G, IntegerVector dims, I
 //' @param a1 assignments of individuals in pop 1 to either pop 1 or 2
 //' @param a2 assignments of individuals in pop 2 to either pop 1 or 2
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
 List rcpp_dispersal_placement(IntegerVector P1, IntegerVector P2, IntegerVector d1, IntegerVector d2, IntegerVector a1, IntegerVector a2) {
 

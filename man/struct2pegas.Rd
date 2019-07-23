@@ -2,23 +2,23 @@
 % Please edit documentation in R/compute_summaries.R
 \name{struct2pegas}
 \alias{struct2pegas}
-\title{convert the two population "struct"s to a data frame of loci that the pegas package can use}
+\title{Conversion of class \code{struct} to class \code{loci}}
 \usage{
-struct2pegas(P1, P2)
-
-struct2pegas(P1, P2)
+struct2pegas(x)
 }
 \arguments{
-\item{P1}{the pop struct, indexed by indiv, locus, gene copy, for pop 1}
-
-\item{P2}{the pop struct for pop 2}
-
-\item{P1}{the pop struct, indexed by indiv, locus, gene copy, for pop 1}
-
-\item{P2}{the pop struct for pop 2}
+\item{x}{List of objects of class \code{"struct"} with the initial genetic structure of populations.}
 }
 \description{
-This will work as long as there are not more than 9 alleles.
+This function converts an object of class \code{"struct"} to an object of class \code{"loci"} that can be used by the package \code{pegas}
+}
+\examples{
+## We first create a random population with 100 individuals and 10 biallelic loci
+N <- 100  # Population size
+nl <- 10  # Number of additive loci
+na <- 2  # Number of alleles per locus
+G <- initial.struct(N,nl,na)
 
-This should work with any number of alleles
+## We convert the object of class 'struct' into 'loci'
+struct2pegas(list(G))
 }

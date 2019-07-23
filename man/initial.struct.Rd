@@ -2,17 +2,33 @@
 % Please edit documentation in R/glads_funcs.R
 \name{initial.struct}
 \alias{initial.struct}
-\title{a function to generate the initial population structure}
+\title{Initial Structure}
 \usage{
-initial.struct(n.N1, n.l, n.a.l)
+initial.struct(N, nl, na)
 }
 \arguments{
-\item{n.N1}{Number of individuals in population 1}
+\item{N}{Number of individuals in the initial population}
 
-\item{n.l}{Number of loci}
+\item{nl}{Number of simulated loci}
 
-\item{n.a.l}{Number of alleles at each locus.  Just set as a single scalar for all the loci right now.}
+\item{na}{Number of alleles at each locus. This parameter set the number of alleles for all loci.}
+}
+\value{
+An object of class \code{"struct"} or an array.
 }
 \description{
-fill in initial values
+This function generates an object of class \code{"struct"} with an initial genetic population structure for simulations.
+}
+\details{
+This function returns a three-dimensional array. Rows represent individuals and columns the different loci. Each element of the array is an integer defining the copy of a given allele at a given locus. The third dimension of the array has two layers representing a pair of homologous chromosomes.
+}
+\examples{
+##Initial population size of 10 individuals with 5 biallelic loci
+initial.population.size=10
+n.loci=5
+n.alleles.per.locus=2
+initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+}
+\seealso{
+\code{\link{evolve}}
 }

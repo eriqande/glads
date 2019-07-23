@@ -6,17 +6,18 @@
 using namespace Rcpp;
 
 // rcpp_g2p_map
-NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double num_loci_t, double v_e);
-RcppExport SEXP _glads_rcpp_g2p_map(SEXP GSEXP, SEXP dimsSEXP, SEXP bvsSEXP, SEXP num_loci_tSEXP, SEXP v_eSEXP) {
+NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double add_loci, double sex_ratio, double e_v);
+RcppExport SEXP _glads_rcpp_g2p_map(SEXP GSEXP, SEXP dimsSEXP, SEXP bvsSEXP, SEXP add_lociSEXP, SEXP sex_ratioSEXP, SEXP e_vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerVector >::type G(GSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type bvs(bvsSEXP);
-    Rcpp::traits::input_parameter< double >::type num_loci_t(num_loci_tSEXP);
-    Rcpp::traits::input_parameter< double >::type v_e(v_eSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_g2p_map(G, dims, bvs, num_loci_t, v_e));
+    Rcpp::traits::input_parameter< double >::type add_loci(add_lociSEXP);
+    Rcpp::traits::input_parameter< double >::type sex_ratio(sex_ratioSEXP);
+    Rcpp::traits::input_parameter< double >::type e_v(e_vSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_g2p_map(G, dims, bvs, add_loci, sex_ratio, e_v));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -89,7 +90,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_glads_rcpp_g2p_map", (DL_FUNC) &_glads_rcpp_g2p_map, 5},
+    {"_glads_rcpp_g2p_map", (DL_FUNC) &_glads_rcpp_g2p_map, 6},
     {"_glads_rcpp_recombo_segregate", (DL_FUNC) &_glads_rcpp_recombo_segregate, 3},
     {"_glads_breakpoints1", (DL_FUNC) &_glads_breakpoints1, 2},
     {"_glads_rcpp_recombo_segregate_expo", (DL_FUNC) &_glads_rcpp_recombo_segregate_expo, 5},

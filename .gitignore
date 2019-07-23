@@ -8,3 +8,5 @@ src/*.dll
 .DS_Store
 junk
 manuscript
+inst/doc
+R-examples/Example0.R

@@ -28,7 +28,7 @@ macs_path <- function() {
 #' path to the msformatter executable
 #'
 #' blab blah
-#' #@export
+#' @export
 msformatter_path <- function() {
   if(.Platform$OS.type=="windows") {
     stop("Windows not supported")

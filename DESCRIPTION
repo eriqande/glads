@@ -11,6 +11,7 @@ Imports:
     dplyr,
     magrittr,
     pegas,
+    progress,
     Rcpp (>= 0.12.7),
     readr
 LinkingTo: Rcpp

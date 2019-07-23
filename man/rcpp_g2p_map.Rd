@@ -2,22 +2,24 @@
 % Please edit documentation in R/RcppExports.R
 \name{rcpp_g2p_map}
 \alias{rcpp_g2p_map}
-\title{rcpp version of g2p.map to see how it fares speedwise}
+\title{Phenotype function from C++}
 \usage{
-rcpp_g2p_map(G, dims, bvs, num_loci_t, v_e)
+rcpp_g2p_map(G, dims, bvs, add_loci, sex_ratio, e_v)
 }
 \arguments{
-\item{G}{the structure giving the genotypes of the indviduals.  Actually a 3-D array indexed by indiv, locus, gene copy}
+\item{G}{An object of class \code{"struct"} with the genetic structure of each individual in the population.}
 
-\item{dims}{the dimensions of the 3-D array G for internal use.}
+\item{dims}{A vector with the dimensions of the 3-D array G.}
 
-\item{bvs}{matrix of the breeding values, indexed by loci and alleles}
+\item{bvs}{A matrix with the breeding values, indexed by loci and alleles}
 
-\item{num_loci_t}{the number of loci, essentially something to get the mean Z to be 0}
+\item{add_loci}{A vector with the position of additive loci participating in the computation of phenotypes.}
 
-\item{v_e}{the environmental variance in the phenotype}
+\item{sex_ratio}{A numerical value defining the sex ratio of populations}
+
+\item{e_v}{A numerical value defining the environmental variance in the computation of phenotypes.}
 }
 \description{
-Just a reimplementation using Rcpp.  This returns a matrix.  The first column
-are the phenotype values and the second column are the sexes.
+A function for the computation of additive phenotypes
 }
+\keyword{internal}

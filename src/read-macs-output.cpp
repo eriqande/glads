@@ -25,6 +25,7 @@ bool hasEnding (std::string const &fullString, std::string const &ending) {
 //' @param Input the path to the mac | msformatter output file to read in. Note that
 //' tilde expansion will not occur on this path
 //' @export
+//' @keywords internal
 // [[Rcpp::export]]
 List read_macs_output(CharacterVector Input) {
   int i,j;

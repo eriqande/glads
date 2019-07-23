@@ -22,3 +22,4 @@ the genotype struct.
 \description{
 Note that this is hard-wired for diploidy.
 }
+\keyword{internal}
