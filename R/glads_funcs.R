@@ -461,47 +461,57 @@ newborns <- function(x, recombination, type){
 #' n.gens <- 10
 #' pop <- evolve(list(start1), n.gens, "constant", "map", recom.map)
 #'
-#' ## A similar simulation but with recombination type "average". We need to specify the position of loci and the size of the chromosome (MB)
+#' ## A similar simulation but with recombination type "average".
+#' ## We need to specify the position of loci and the size of the chromosome (MB)
 #' loci.pos<- sample(80000: 12000000, 10) #random loci positions
 #' chromo_mb<-12000000 	 #chromosome size
 #' crossover <- 1/100000000.0 #average recombination rate (1 cM/MB)
 #' pop <- evolve(list(start1), n.gens, "constant", "average", crossover, loci.pos, chromo_mb)
 #'
 #' # We include a mutation rate for the simulation of biallelic loci
-#' pop <- evolve(list(start1), n.gens, "constant", "average", crossover, loci.pos, chromo_mb, mutation.rate = 0.0001)
+#' pop <- evolve(list(start1), n.gens, "constant", "average", crossover,
+#'               loci.pos, chromo_mb, mutation.rate = 0.0001)
 #'
 #' # A second population is included to incorporate the effect of migration
 #' start2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
-#' pop <- evolve(list(start1, start2), n.gens, "constant", "average", crossover, loci.pos, chromo_mb, migration.rate = 0.01)
+#' pop <- evolve(list(start1, start2), n.gens, "constant", "average", crossover,
+#'               loci.pos, chromo_mb, migration.rate = 0.01)
 #'
 #' # The sex of individuals may be set for the starting generations.
 #' sex.start1 <- sample(1:2, initial.population.size, replace=T)
 #' sex.start2 <- sample(1:2, initial.population.size, replace=T)
 #' init.sex <- list(sex.start1, sex.start2)
-#' pop <- evolve(list(start1, start2), n.gens, "constant", "average", crossover, loci.pos, chromo_mb, init.sex = init.sex)
+#' pop <- evolve(list(start1, start2), n.gens, "constant", "average", crossover,
+#'               loci.pos, chromo_mb, init.sex = init.sex)
 #'
 #'
 #' ##################################
 #' # Type of evolution = "dynamic"  #
 #' ##################################
 #'
-#' ## We set the parameters for the computation of phenotypes and for the fitness function of the type 'dynamic'
+#' ## We set the parameters for the computation of phenotypes and for the
+#' ## fitness function of the type 'dynamic'
 #' sex.ratio <- 0.5
 #' mean.fitness <- 3 #mean number of offsprings per breeding pair
 #' d.d <- 0.01 #density-dependent demographic effect
 #'
 #' set.seed(1) #setting the seed for reproducible random numbers
-#' pop <- evolve(list(start1), n.gens, "dynamic", "map", recom.map, param.z = list(sex.ratio), param.w = list(mean.fitness, d.d))
+#' pop <- evolve(list(start1), n.gens, "dynamic", "map", recom.map, param.z = list(sex.ratio),
+#'               param.w = list(mean.fitness, d.d))
 #'
 #' ##################################
 #' # Type of evolution = "additive" #
 #' ##################################
 #'
-#' ## We set the parameters for the computation of phenotypes and for the fitness function of the type 'additive'
+#' ## We set the parameters for the computation of phenotypes and for
+#' ## the fitness function of the type 'additive'
 #' sex.ratio <- 0.5
 #' fitness.pos <- 1:n.loci #all simulated loci are additive
 #' add.loci <- n.loci
-#' bvs <- t(array( seq(0,1, length = n.alleles.per.locus) ,c(n.alleles.per.locus, add.loci))) # breeding value of additive loci
+#'
+#' # next line is breeding value of additive loci
+#' bvs <- t(array( seq(0,1, length = n.alleles.per.locus) ,c(n.alleles.per.locus, add.loci)))
+#'
 #' e.v <- 0.01 					# stochastic environmental variant
 #' param.z <- list(sex.ratio, fitness.pos, bvs, add.loci, e.v)
 #'
@@ -513,19 +523,24 @@ newborns <- function(x, recombination, type){
 #' param.w <- list(b0,b1,b2,b3, d.v, add.loci)
 #'
 #' set.seed(1) #setting the seed for reproducible random numbers
-#' pop<-evolve(list(start1), n.gens, "additive", "map", recom.map, param.z = param.z, param.w = param.w)
+#' pop<-evolve(list(start1), n.gens, "additive", "map", recom.map,
+#'             param.z = param.z, param.w = param.w)
 #'
 #' ##################################
 #' #  Type of evolution = "custom"  #
 #' ##################################
 #'
-#' ## We set a custom 'phenotype' and/or 'fitness' function. In this example the custom functions are very similar to the default ones.
+#' ## We set a custom 'phenotype' and/or 'fitness' function. In this example
+#' ## the custom functions are very similar to the default ones.
 #'
 #' phenotype <- function(struct, ...){
 #'  pop.struct <- struct[ , fitness.pos, ]
 #'  temp <- dim(pop.struct)
 #'  mat <- matrix(1:temp[2],temp[1],temp[2],byrow=TRUE)
-#'  loci.n <- array(mat,c(temp[1],temp[2],2)) # array that gives the locus index at each position in pop.struct
+#'
+#'  # the next line gives an array that gives the locus index at each position in pop.struct
+#'  loci.n <- array(mat,c(temp[1],temp[2],2))
+#'
 #'  new.n <- (pop.struct-1)*add.loci+loci.n
 #'  bvv <- as.vector(bvs) # turn to bvs
 #'  outp <- array(bvv[new.n],c(temp[1],temp[2],2))
@@ -550,7 +565,8 @@ newborns <- function(x, recombination, type){
 #'
 #' set.seed(1) #setting the seed for reproducible random numbers
 #' pop<-evolve(list(start1), n.gens, "custom", "map", recom.map,
-#'            param.z =list(sex.ratio = sex.ratio, fitness.pos = fitness.pos, bvs = bvs, add.loci = add.loci, e.v = e.v),
+#'            param.z =list(sex.ratio = sex.ratio, fitness.pos = fitness.pos,
+#'                          bvs = bvs, add.loci = add.loci, e.v = e.v),
 #'            param.w = list(b0 = b0, b1 = b1, b2 = b2, b3 = b3, d.v = d.v, n.loci = add.loci))
 #'
 #' }
