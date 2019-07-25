@@ -302,7 +302,7 @@ newborns <- function(x, recombination, type){
            z$z <- rep(mean.fitness, n)
          },
          dynamic = {
-           sex.ratio <- as.numeric(param.z[[1]])
+           sex.ratio <- param.z[[1]]
            mean.fitness <- param.w[[1]]
            d.d <- param.w[[2]]
 
@@ -641,7 +641,7 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'
       for (i in 1:time) {
         if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z, param.w)) })
+        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z[[i]], param.w[[i]])) })
 
         out <- lapply(y, newborns, recombination = recombination, type = type)
 
