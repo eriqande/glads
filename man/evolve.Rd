@@ -4,11 +4,10 @@
 \alias{evolve}
 \title{Evolution of genetic and genomic landscapes}
 \usage{
-evolve(x, time, type = c("constant", "dynamic", "additive", "customZ",
-  "customW", "custom"), recombination = c("map", "average"), recom.rate,
-  loci.pos = NULL, chromo_mb = NULL, init.sex = NULL,
-  migration.rate = NULL, mutation.rate = NULL, param.z = NULL,
-  param.w = NULL)
+evolve(x, time, type = c("constant", "dynamic", "additive", "custom"),
+  recombination = c("map", "average"), recom.rate, loci.pos = NULL,
+  chromo_mb = NULL, init.sex = NULL, migration.rate = NULL,
+  mutation.rate = NULL, param.z = NULL, param.w = NULL)
 }
 \arguments{
 \item{x}{List of objects of class \code{"struct"} with the initial genetic structure of populations.}
@@ -31,9 +30,9 @@ evolve(x, time, type = c("constant", "dynamic", "additive", "customZ",
 
 \item{mutation.rate}{A numerical value setting the mutation rate per site. It is currently restricted to biallelic SNPs (genetic structures with values 1 or 2). The default value is NULL.}
 
-\item{param.z}{A list with the parameter values for the function computing phenotypes.}
+\item{param.z}{A list with the parameter values for the function computing phenotypes. The list of parameters for each population should be included as a list of list (see Example)}
 
-\item{param.w}{A list with the parameter values for the fitness function.}
+\item{param.w}{A list with the parameter values for the fitness function. The list of parameters for each population should be included as a list of list (see Example)}
 }
 \value{
 A list of objects of class \code{"struct"} or array.

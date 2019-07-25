@@ -9,4 +9,4 @@ src/*.dll
 junk
 manuscript
 inst/doc
-R-examples/Example0.R
+./Example0.R

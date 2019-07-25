@@ -382,8 +382,8 @@ newborns <- function(x, recombination, type){
 #' @param init.sex A list of vectors defining the sex of the initial individuals in the populations (1: females and 2: males). The default value is NULL and assigns the sex of the first generation randomly.
 #' @param migration.rate A single value setting the migration rate between all populations, or a squared matrix of order equal to the number of populations, with the migration rate between them (migration['from', 'to']). It is ignored for single population simulations. The default  value is NULL with no migration between populations.
 #' @param mutation.rate A numerical value setting the mutation rate per site. It is currently restricted to biallelic SNPs (genetic structures with values 1 or 2). The default value is NULL.
-#' @param param.z A list with the parameter values for the function computing phenotypes.
-#' @param param.w A list with the parameter values for the fitness function.
+#' @param param.z A list with the parameter values for the function computing phenotypes. The list of parameters for each population should be included as a list of list (see Example)
+#' @param param.w A list with the parameter values for the fitness function. The list of parameters for each population should be included as a list of list (see Example)
 #' @details This function returns a list of populations composed of two-dimensional arrays that represents a pair of homologous chromosomes. Rows represent individuals and columns the different loci. Each element of the array is an integer defining the copy of a given allele at a given locus.
 #'
 #' Different types of evolution are available for simulations:
@@ -571,7 +571,7 @@ newborns <- function(x, recombination, type){
 #'
 #' }
 #' @export
-evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'customZ', 'customW', 'custom'), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL) {
+evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL) {
 
   npop<-length(x)
   struct <- x
@@ -612,7 +612,7 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'customZ
       for (i in 1:time) {
         if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z, param.w)) })
+        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z[[i]], param.w[[i]])) })
 
         out <- lapply(y, newborns, recombination = recombination, type = type)
 
