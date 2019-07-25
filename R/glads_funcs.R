@@ -302,7 +302,7 @@ newborns <- function(x, recombination, type){
            z$z <- rep(mean.fitness, n)
          },
          dynamic = {
-           sex.ratio <- param.z[[1]]
+           sex.ratio <- as.numeric(param.z[[1]])
            mean.fitness <- param.w[[1]]
            d.d <- param.w[[2]]
 
