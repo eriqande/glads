@@ -24,13 +24,21 @@ library(glads)
 ##	   	recombination map,     ##
 ## 	 	with fitness function  ##
 #################################
+########################
+### Generating data  ###
+########################
+initial.population.size=400 #Initial population size
+n.loci=300					#Number of loci
+n.alleles.per.locus=20		#Number of alleles
+
+set.seed(2)
+start.1 <- start.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+start <- list(start.1, start.1) #Initial populations
+
 
 ###################
 ### Parameters  ###
 ###################
-initial.population.size=400
-n.loci=300					#Number of loci
-n.alleles.per.locus=20		#Number of alleles
 loci.pos=1:n.loci			#Loci position
 add.loci=50					#Number of additive loci
 fitness.pos <- 125:(125+(add.loci-1))   #Additive loci position
@@ -60,9 +68,6 @@ param.z2 <- param.z1
 ###################
 ### Simulations ###
 ###################
-set.seed(2)
-start.1 <- start.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
-start <- list(start.1, start.1) #Initial populations
 
 example<-evolve(x = start, time = n.gens, type = "additive", recombination = "map", recom.rate = recom.map, param.z = list(param.z1, param.z2), param.w = list(param.w1, param.w2))
 
