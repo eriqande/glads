@@ -15,7 +15,7 @@ rcpp_recombo_segregate_expo(G, dims, pos, chromo_length, cross)
 
 \item{chromo_length}{total chromoome length in base pairs}
 
-\item{cross}{mean crossover distance by base pairs}
+\item{cross}{per base-pair rate of recombination.  For example, 1 cM per megabase equates to 1e-08.}
 }
 \value{
 The return value is a long vector that can be squished into a matrix as appropriate to put it into
