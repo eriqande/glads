@@ -17,7 +17,6 @@
 rm(list=ls())
 graphics.off()
 library(glads)
-library(progress)
 
 
 #################################
@@ -25,153 +24,6 @@ library(progress)
 ##	   	recombination map,     ##
 ## 	 	with fitness function  ##
 #################################
-
-
-##################
-### Functions  ###
-##################
-
-#########################################################
-# a function to generate the initial population structure
-initial.struct          <- function(n.N1,n.l,n.a.l){ # n.N1 - initial N, n.l - N loci, n.a.l - alleles / locus
-  rand.ints             <- sample(1:n.a.l,n.N1*n.l*2,TRUE)
-  struct                <- array(rand.ints,c(n.N1,n.l,2)) # an array
-  return(struct)
-}
-
-#########################################################
-# mating function
-resample <- function(x, ...) x[sample.int(length(x), ...)]
-mating <- function(fitn, struct){
-  females      <- which(fitn[,"sex"] %in% 1)
-  males        <- which(fitn[,"sex"] %in% 2)
-  try(if(length(females)<1 || length(males)<1 ) stop("Population extinction. There is not enough females or males for mating.", call.=F))
-  female.fitn  <- fitn[females,]
-  female.stru  <- struct[females,,, drop = F]
-  male.fitn    <- fitn[males,]
-  mum.stru     <- female.stru[c(rep(1:length(females),times=female.fitn[,"fit"])),,, drop = F]
-  dads         <- resample(males,sum(female.fitn[,"fit"]),TRUE,prob=male.fitn[,"fit"])
-  dad.stru     <- struct[c(dads),,, drop = F]
-  return(list(mum.stru,dad.stru))
-}
-
-#########################################################
-# dispersal
-fast_dispersal <- function(pop1,pop2,rate1to2,rate2to1){
-  n1 <- dim(pop1)[1]
-  n2 <- dim(pop2)[1]
-  L <- dim(pop1)[2]
-  g <- 2 #diploidia?
-  p1 <- ifelse(runif(n1)<rate1to2,2,1)
-  p2 <- ifelse(runif(n2)<rate2to1,1,2)
-
-  ret <- rcpp_dispersal_placement(pop1, pop2, dim(pop1), dim(pop2), p1, p2);
-  dim(ret[[1]]) <- c(sum(c(p1, p2)==1), L, g)
-  dim(ret[[2]]) <- c(sum(c(p1, p2)==2), L, g)
-
-  ret
-}
-
-
-#########################################################
-# fitness function
-fitness <- function(z,n,b0,b1,b2,b3,epsilon, n.loci){
-  ze <- z[,1]
-  ng=n.loci
-  a=b0
-  b=b1
-  c=b2
-  w <- round( a*exp(-((ze-b*ng)^2)/(2*(c*ng)^2) ) - b3*n + rnorm(n,0,epsilon) , 0)
-  w <- ifelse(w<0,0,w)
-  return(w)
-}
-
-
-#########################################################
-doer.ex1 <- function(x){
-  struct <- x[[1]]
-  bvs <- x[[2]]
-  nloc <- x[[3]]
-  ve <- x[[4]]
-  b0 <- x[[5]]
-  b1 <- x[[6]]
-  b2 <- x[[7]]
-  b3 <- x[[8]]
-  epsil <- x[[9]]
-  theta <- x[[10]]
-  add.loci<-x[[11]]
-  add.pos<-x[[12]]
-
-  struct.fit<-struct[, add.pos:(add.pos+(add.loci-1)),]
-
-
-  zs             <- rcpp_g2p_map(struct.fit, dim(struct.fit), bvs, add.loci, ve)
-  fits           <- cbind(zs,fit=fitness(zs,dim(zs)[1],b0,b1,b2,b3,epsil, add.loci))
-  pairs          <- mating(fits,struct)
-  mums           <- pairs[[1]]
-  dads           <- pairs[[2]]
-  struct.rt      <- array(NA, dim(mums))
-
-  struct.rt[,,1] <- rcpp_recombo_segregate(mums, dim(mums), theta)
-  struct.rt[,,2] <- rcpp_recombo_segregate(dads, dim(dads), theta)
-
-  return(struct.rt)
-}
-
-#########################################################
-main.function.ex1<- function(Nsize,nloci,nalleles,Ve, Vd, time, fitness.param, migration.rate, recom.map, start.1, start.2, bv.for.alleles, add.loci, add.pos){
-
-  initial.population.size <- Nsize # NOTE: THIS WILL BECOME A VECTOR TWO NUMBERS WHEN WE EXTEND TO TWO POPULATIONS
-  n.loci                  <- nloci # how many linked genes we will deal with
-
-  loci.pos                <- 1:n.loci
-
-  n.alleles.per.locus     <- nalleles
-  bv.for.alleles          <- bv.for.alleles
-
-  add.loci				    <- add.loci
-  add.pos					<- add.pos
-
-  V.e                     <- Ve # standard deviation in environmental component of the phenotype
-  V.d                     <- Vd # standard demographic variation
-  n.gens                  <- time # number of generations.
-
-  disp					<- migration.rate #rate of dispersal
-  theta					<- recom.map #recombination rate
-
-
-  struct.1				<- start.1
-  struct.2				<- start.2
-
-  param					<- fitness.param
-
-  param[1,2]
-
-  ############################################
-  pb <- progress_bar$new(format = " Work in progress [:bar] :percent eta: :eta",total =n.gens, clear = FALSE, width= 100)
-
-  res <- list()
-  for (i in 1:n.gens){
-
-    x1 <- list(struct.1,bv.for.alleles,n.loci,V.e,param[1,1],param[1,2],param[1,3],param[1,4],V.d, theta, add.loci, add.pos )
-    x2 <- list(struct.2,bv.for.alleles,n.loci,V.e,param[2,1],param[2,2],param[2,3],param[2,4],V.d, theta, add.loci, add.pos )
-
-    x <- list(x1,x2)
-
-    out <- lapply(x, doer.ex1)
-    struct.1 <- out[[1]]
-    struct.2 <- out[[2]]
-    outd <- fast_dispersal(struct.1,struct.2,disp,disp)
-    struct.1 <- outd[[1]]
-    struct.2 <- outd[[2]]
-
-    if (i %% n.gens==0) res<- list(struct.1,struct.2)
-    pb$tick()
-  }
-
-  return(res)
-}
-
 
 ###################
 ### Parameters  ###
@@ -181,20 +33,13 @@ n.loci=300					#Number of loci
 n.alleles.per.locus=20		#Number of alleles
 loci.pos=1:n.loci			#Loci position
 add.loci=50					#Number of additive loci
-add.pos=125					#Starting position of additive loci
+fitness.pos <- 125:(125+(add.loci-1))   #Additive loci position
+sex.ratio <- 0.5
 
-bv.for.alleles = t(array( seq(0,1, length = n.alleles.per.locus) ,c(n.alleles.per.locus, add.loci))) #Breeding value of additive loci
-V.e=0.01 					#Stochastic environmental variant
-V.d=1 						#Stochastic demographic variant
+bvs = t(array( seq(0,1, length = n.alleles.per.locus) ,c(n.alleles.per.locus, add.loci))) #Breeding value of additive loci
+e.v=0.01 					#Stochastic environmental variant
+d.v=1 						#Stochastic demographic variant
 n.gens=100					#Number of generations
-
-#b0 Maximum generated offspring
-#b1 Phenotypic optima
-#b2 Variance of the fitness curve
-#b3 Density-dependent demographic variant
-fitness.param<-cbind(b0=c(6,6), b1=c(0.25,0.75), b2=c(0.5,0.5), b3=c(0.01,0.005)) #Parameter of the fitness function
-rownames(fitness.param) <-c("pop1", "pop2")
-
 
 recom.map= c(rep(0.5, 299))	#Recombination map
 Linked<-c(60:69, 150:159, 230:239) #Linked loci
@@ -203,19 +48,41 @@ recom.map[Linked]<-0.0001	#Recombination map with linked loci
 migration.rate=0			#migration rate
 
 
+#b0 Maximum generated offspring
+#b1 Phenotypic optima
+#b2 Variance of the fitness curve
+#b3 Density-dependent demographic variant
+##Parameters of the fitness function
+param.w1 <- list(b0 = 6,b1 = 0.25, b2 = 0.5, b3 = 0.01, d.v = d.v, add.loci = add.loci)
+param.w2 <- list(b0 = 6,b1 = 0.75, b2 = 0.5, b3 = 0.005, d.v = d.v, add.loci = add.loci)
+
+##Parameters of the phenotype function
+param.z1 <- list(sex.ratio, fitness.pos, bvs, add.loci, e.v)
+param.z2 <- param.z1
+
 ###################
 ### Simulations ###
 ###################
 set.seed(2)
 start.1 <- start.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
+start <- list(start.1, start.1) #Initial populations
 
-example<-main.function.ex1(initial.population.size, n.loci, n.alleles.per.locus,V.e, V.d, n.gens, fitness.param, migration.rate, recom.map, start.1, start.2, bv.for.alleles, add.loci, add.pos)
+example<-evolve(x = start, time = n.gens, type = "additive", recombination = "map", recom.rate = recom.map, param.z = list(param.z1, param.z2), param.w = list(param.w1, param.w2))
 
-#Commputation of Fst values
-FST<-fst_at_loci_with_pos(example[[1]] , example[[2]], loci.pos)$Fst
+###################
+###     Fst     ###
+###################
+##Commputation of Fst values
+#We should first convert the output from class 'struct' to class 'loci'
+
+example.loci <- struct2pegas(example)
+
+#Estimating Fst with library 'pegas'
+require(pegas)
+FST<-Fst(example.loci)
 
 #Figure
-plot(loci.pos, FST, pch=16, bty="l", xlab="Loci position", ylab="Fst", ylim=c(0,1), type="l", xaxs="i", yaxs="i", las=1, lwd=2  )
+plot(loci.pos, FST[,"Fst"], pch=16, bty="l", xlab="Loci position", ylab="Fst", ylim=c(0,1), type="l", xaxs="i", yaxs="i", las=1, lwd=2  )
 
 ######################################################################################################
 ######################################################################################################
