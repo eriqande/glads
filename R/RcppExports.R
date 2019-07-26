@@ -53,7 +53,7 @@ breakpoints1 <- function(chr_len, rate) {
 #' @param dims the dimensions of the 3-D array G for internal use.
 #' @param pos vector of positions of the loci.  This is an integer vector.  Has to be in sorted order (ascending)
 #' @param chromo_length total chromoome length in base pairs
-#' @param cross mean crossover distance by base pairs
+#' @param cross per base-pair rate of recombination.  For example, 1 cM per megabase equates to 1e-08.
 #' @return  The return value is a long vector that can be squished into a matrix as appropriate to put it into
 #' the genotype struct.
 #' @export

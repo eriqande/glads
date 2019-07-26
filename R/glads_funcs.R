@@ -211,7 +211,7 @@ phenotype <- function(G, bvs, add.loci, sex.ratio, e.v){
 #' The following parameter should be included as a list of parameters 'x':
 #' \itemize{
 #'   \item{struct:} {An object of class \code{"struct"} with the genetic structure of each individual in the population.}
-#'   \item{recom.rate:} {A numerical value for recombination type 'average' or a vector of nl - 1 elements with the recombination rate between neigbour loci for type 'map' (nl: number of loci).}
+#'   \item{recom.rate:} {A numerical value of the per-base-pair recombination rate (for example, 1e-08) for recombination type 'average' or a vector of nl - 1 elements with the recombination rate between neigbour loci for type 'map' (nl: number of loci).}
 #'   \item{init.sex:} {A vector defining the sex of the initial individuals in the populations (1: females and 2: males). The default value is NULL and assign the sex of the first generation randomly.}
 #'   \item{mutation.rate:} {Mutation rate of biallelic loci.}
 #'   \item{loci.pos:} {A vector with the position of loci. The default value is NULL, but it is required for recombination type 'average'.}
