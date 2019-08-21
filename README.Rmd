@@ -1,21 +1,27 @@
-glads — genomic landscape of divergence simulation
-================
+---
+title: "glads --- genomic landscape of divergence simulation"
+output: github_document
+---
 
-This is an R package with a number of functions to allow users to build
-up forward-in-time simulations to explore the dynamics of diverging
-genomes under various scenarios of gene flow, selection and
-genotype-phenotype maps.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE
+  )
+```
 
-It has been written by Claudio S. Quilodrán, Eric C. Anderson, and Tim
-Coulson. The details of it appear in a manuscript submitted to *Methods
-in Ecology and Evolution* entitled, “The multiple population genetic and
-demographic routes to islands of genomic divergence.”
+This is an R package with a number of functions to allow users to build up
+forward-in-time simulations to explore the dynamics of diverging genomes under
+various scenarios of gene flow, selection and genotype-phenotype maps.
+
+It has been written by Claudio S. Quilodrán, Eric C. Anderson, and Tim Coulson.
+The details of it appear in a manuscript submitted to _Methods in Ecology and Evolution_
+entitled, "The multiple population genetic and demographic
+routes to islands of genomic divergence."
 
 To use it, you must:
 
-1.  Within R, make sure the following packages are installed:
-    
-    ``` r
+1. Within R, make sure the following packages are installed:
+    ```{r, eval = FALSE}
     dplyr,
     magrittr,
     pegas,
@@ -23,37 +29,31 @@ To use it, you must:
     Rcpp (>= 0.12.7),
     readr
     ```
-
-2.  On your Unix terminal, clone this repository from GitHub, then build
-    and install it:
-    
-    ``` sh
+1. On your Unix terminal, clone this repository from GitHub, then build and install it:
+    ```{sh, eval=FALSE}
     git clone https://github.com/eriqande/glads
     R CMD INSTALL --no-multiarch --with-keep.source glads
     ```
 
-If you prefer, after cloning it from GitHub, you can open the RStudio
-project (`glads/glads.Rproj`) within it and build and install by using
-the “Install and Restart” button within RStudio.
+If you prefer, after cloning it from GitHub, you can open the
+RStudio project (`glads/glads.Rproj`) within it and build and install
+by using the "Install and Restart" button within RStudio.
 
 Full documentation for the package can be found with:
-
-``` r
+```r
 help(package = "glads")
 ```
 
-After that, to see examples of its use, you can run through the examples
-in `R-examples/Example1.R` and `R-examples/Example2.R` within the
-`glads` repository.
+After that, to see examples of its use, you can run through the examples in
+`R-examples/Example1.R` and `R-examples/Example2.R` within the `glads` repository.
 
-In fact, we will mirror `R-examples/Example1.R`
-here:
+In fact, we will mirror `R-examples/Example1.R` here:
 
 ## R-examples/Example1.R
 
 ### Preamble and loading library
 
-``` r
+```{r}
 #--------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------
 #
@@ -71,22 +71,25 @@ here:
 #--------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------
 library(glads)
+
+
 ```
+
 
 ### Setting the parameters for the first example: recombination map with fitness function
 
-``` r
+```{r}
 #################################
-##   Example 1: see Table 1    ##
-##      recombination map,     ##
-##      with fitness function  ##
+## 	 Example 1: see Table 1    ##
+##	   	recombination map,     ##
+## 	 	with fitness function  ##
 #################################
 ########################
 ### Generating data  ###
 ########################
 initial.population.size=400 #Initial population size
-n.loci=300                  #Number of loci
-n.alleles.per.locus=20      #Number of alleles
+n.loci=300					#Number of loci
+n.alleles.per.locus=20		#Number of alleles
 
 set.seed(2)
 start.1 <- start.2 <- initial.struct(initial.population.size,n.loci,n.alleles.per.locus)
@@ -96,19 +99,19 @@ start <- list(start.1, start.1) #Initial populations
 ###################
 ### Parameters  ###
 ###################
-loci.pos=1:n.loci           #Loci position
-add.loci=50                 #Number of additive loci
+loci.pos=1:n.loci			#Loci position
+add.loci=50					#Number of additive loci
 fitness.pos <- 125:(125+(add.loci-1))   #Additive loci position
 sex.ratio <- 0.5
 
 bvs = t(array( seq(0,1, length = n.alleles.per.locus) ,c(n.alleles.per.locus, add.loci))) #Breeding value of additive loci
-e.v=0.01                    #Stochastic environmental variant
-d.v=1                       #Stochastic demographic variant
-n.gens=100                  #Number of generations
+e.v=0.01 					#Stochastic environmental variant
+d.v=1 						#Stochastic demographic variant
+n.gens=100					#Number of generations
 
-recom.map= c(rep(0.5, 299)) #Recombination map
+recom.map= c(rep(0.5, 299))	#Recombination map
 Linked<-c(60:69, 150:159, 230:239) #Linked loci
-recom.map[Linked]<-0.0001   #Recombination map with linked loci
+recom.map[Linked]<-0.0001	#Recombination map with linked loci
 
 #b0 Maximum generated offspring
 #b1 Phenotypic optima
@@ -125,7 +128,7 @@ param.z2 <- param.z1
 
 ### Doing the simulation
 
-``` r
+```{r}
 ###################
 ### Simulations ###
 ###################
@@ -143,7 +146,7 @@ example <- evolve(
 
 ### Computing Fst at the markers
 
-``` r
+```{r}
 ###################
 ###     Fst     ###
 ###################
@@ -154,31 +157,31 @@ example.loci <- struct2pegas(example)
 
 #Estimating Fst with library 'pegas'
 FST <- pegas::Fst(example.loci)
+
 ```
 
 ### Plotting the results
 
-``` r
+```{r fst_plot1}
 #Figure
 plot(loci.pos, FST[,"Fst"], pch=16, bty="l", xlab="Loci position", ylab="Fst", ylim=c(0,1), type="l", xaxs="i", yaxs="i", las=1, lwd=2  )
 ```
 
-![](README_files/figure-gfm/fst_plot1-1.png)<!-- -->
 
 ### Doing all of the second example: mutation rate, average recombination, biallelic SNPs, without fitness function
 
-``` r
+```{r example2}
 #################################
-##   Example 2: Mutation rate, ##
-##     average recombination,  ##
-##         biallelic SNPs      ##
-##   without fitness function  ##
+## 	 Example 2: Mutation rate, ##
+##	   average recombination,  ##
+##		   biallelic SNPs      ##
+## 	 without fitness function  ##
 #################################
 ########################
 ### Generating data  ###
 ########################
-Nind = 200  #Number of individuals
-Nsnp = 1000 #Number of SNPs
+Nind = 200 	#Number of individuals
+Nsnp = 1000	#Number of SNPs
 n.alleles = 2
 
 #Random genetic identity
@@ -189,15 +192,15 @@ start.1 <- start.2 <- initial.struct(Nind, Nsnp, n.alleles)
 ### Parameters  ###
 ###################
 loci.pos<-sort(sample(1:12000000, 1000, replace=F) ) #Loci position
-chromo_mb<-12000000      #Chromosome size
+chromo_mb<-12000000 	 #Chromosome size
 
-sex.ratio = 0.5              #Sex ratio
-mean.fitness = 3             #Offspring per breeding pair
-crossover <- 1.0/100000000.0     #Average recombination rate (cM/MB)
-mutation.rate=1.1*10^-8      #Mutation per site per generation
-n.gens=100                   #Number of generations
-migration.rate=0.075         #Migration rate
-d.d=0.005                    #Demographic effect to avoid exponential growth
+sex.ratio = 0.5 			 #Sex ratio
+mean.fitness = 3 			 #Offspring per breeding pair
+crossover <- 1.0/100000000.0 	 #Average recombination rate (cM/MB)
+mutation.rate=1.1*10^-8 	 #Mutation per site per generation
+n.gens=100					 #Number of generations
+migration.rate=0.075		 #Migration rate
+d.d=0.005					 #Demographic effect to avoid exponential growth
 
 param.z0 <- list(sex.ratio = sex.ratio)
 param.w0 <- list(mean.fitness = mean.fitness, d.d = d.d)
@@ -235,6 +238,5 @@ FST <- pegas::Fst(example.loci2)
 
 #Figure
 plot(loci.pos, FST[,"Fst"], pch=16, bty="l", xlab="Loci position", ylab="Fst", ylim=c(0,1), type="l", xaxs="i", yaxs="i", las=1, lwd=2  )
-```
 
-![](README_files/figure-gfm/example2-1.png)<!-- -->
+```
