@@ -3,6 +3,9 @@ title: "glads --- genomic landscape of divergence simulation"
 output: github_document
 ---
 
+[![DOI](https://zenodo.org/badge/69031005.svg)](https://zenodo.org/badge/latestdoi/69031005)
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE

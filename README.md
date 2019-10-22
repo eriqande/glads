@@ -1,6 +1,8 @@
 glads — genomic landscape of divergence simulation
 ================
 
+[![DOI](https://zenodo.org/badge/69031005.svg)](https://zenodo.org/badge/latestdoi/69031005)
+
 This is an R package with a number of functions to allow users to build
 up forward-in-time simulations to explore the dynamics of diverging
 genomes under various scenarios of gene flow, selection and
