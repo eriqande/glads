@@ -496,8 +496,8 @@ newborns <- function(x, recombination, type){
 #' d.d <- 0.01 #density-dependent demographic effect
 #'
 #' set.seed(1) #setting the seed for reproducible random numbers
-#' pop <- evolve(list(start1), n.gens, "dynamic", "map", recom.map, param.z = list(sex.ratio),
-#'               param.w = list(mean.fitness, d.d))
+#' pop <- evolve(list(start1), n.gens, "dynamic", "map", recom.map, param.z = list(list(sex.ratio)),
+#'               param.w = list(list(mean.fitness, d.d)))
 #'
 #' ##################################
 #' # Type of evolution = "additive" #
@@ -524,7 +524,7 @@ newborns <- function(x, recombination, type){
 #'
 #' set.seed(1) #setting the seed for reproducible random numbers
 #' pop<-evolve(list(start1), n.gens, "additive", "map", recom.map,
-#'             param.z = param.z, param.w = param.w)
+#'             param.z = list(param.z), param.w = list(param.w))
 #'
 #' ##################################
 #' #  Type of evolution = "custom"  #

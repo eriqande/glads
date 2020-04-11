@@ -4,10 +4,20 @@
 \alias{evolve}
 \title{Evolution of genetic and genomic landscapes}
 \usage{
-evolve(x, time, type = c("constant", "dynamic", "additive", "custom"),
-  recombination = c("map", "average"), recom.rate, loci.pos = NULL,
-  chromo_mb = NULL, init.sex = NULL, migration.rate = NULL,
-  mutation.rate = NULL, param.z = NULL, param.w = NULL)
+evolve(
+  x,
+  time,
+  type = c("constant", "dynamic", "additive", "custom"),
+  recombination = c("map", "average"),
+  recom.rate,
+  loci.pos = NULL,
+  chromo_mb = NULL,
+  init.sex = NULL,
+  migration.rate = NULL,
+  mutation.rate = NULL,
+  param.z = NULL,
+  param.w = NULL
+)
 }
 \arguments{
 \item{x}{List of objects of class \code{"struct"} with the initial genetic structure of populations.}
