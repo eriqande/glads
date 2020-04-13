@@ -439,7 +439,7 @@ newborns <- function(x, recombination, type){
 #' @return A list of objects of class \code{"struct"} or array.
 #' @references
 #' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
-#' The many population genetic and demographic routes to islands of genomic divergence..
+#' The many population genetic and demographic routes to islands of genomic divergence.
 #' \emph{Methods in Ecology and Evolution 11(1):6-21.}.
 #' \doi{10.1111/2041-210X.13324}.
 #' @seealso \code{\link{initial.struct}}

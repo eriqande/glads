@@ -233,10 +233,10 @@ pop<-evolve(list(start1), n.gens, "custom", "map", recom.map,
 }
 }
 \references{
-Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2019).
-The multiple population genetic and demographic routes to islands of genomic divergence.
-\emph{bioRxiv}.
-\doi{10.1101/673483}.
+Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
+The many population genetic and demographic routes to islands of genomic divergence.
+\emph{Methods in Ecology and Evolution 11(1):6-21.}.
+\doi{10.1111/2041-210X.13324}.
 }
 \seealso{
 \code{\link{initial.struct}}
