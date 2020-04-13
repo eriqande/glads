@@ -284,6 +284,7 @@ newborns <- function(x, recombination, type){
 
   param.z <- x[[7]]
   param.w <- x[[8]]
+  fun <- x[[9]]
 
   switch(type,
          constant = {
@@ -333,8 +334,8 @@ newborns <- function(x, recombination, type){
            z <- cbind(sex = zs[,"sex"], z = fit)
           },
          custom = {
-           zs <- do.call("phenotype", append(list(struct=struct), param.z))
-           fit <- do.call("fitness", append(list(z = zs[,"z"], sex = zs[,"sex"], n = dim(zs)[1]), param.w))
+           zs <- do.call(fun[1], append(list(struct=struct), param.z))
+           fit <- do.call(fun[2], append(list(z = zs[,"z"], sex = zs[,"sex"], n = dim(zs)[1]), param.w))
            z <- cbind(sex = zs[,"sex"], z = fit)
          },
          stop("Invalid type of evolution. Current options are 'constant', 'dynamic', 'additive', and 'custom'")
@@ -428,10 +429,16 @@ newborns <- function(x, recombination, type){
 #'      This function returns a vector with the fitness value (\eqn{\omega}) of individuals.
 #'    }
 #'  }
-#'  \item{'custom'} {a custom computation of phenotypes and fitness functions. This functions will defined the type of selection fitting particular case studies. Either a function called 'phenotype' or 'fitness' should be introduced into the namespace, with parameter values included in param.z or param.w.
-#'  Assuming a per generation time step, the potential number of offspring produced by each individual depends on its phenotype \eqn{\omega = f(z)}, which in turn depends on the individual genotype and on the environment \eqn{z = g(G, E)}.
-#'  \eqn{G} is a numeric value determined by an individual’s genotype, representing the genetic value of the genotype. In the case of an additive genetic map, the genetic value of a genotype will be a breeding value. \eqn{E} represents the effect of the environment on phenotypic expression, and this allows to capture the effects of plasticity on phenotypic expression.
-#'  The list of parameters ('param.z' and 'param.w') used for the custom 'phenotype' or 'fitness' function should not include variables. In the first case, the variable phenotype values of individuals are already loaded in the working space as 'z', as well as the genetic structure of each individual in a population, included as the object 'struct' (see Examples). }
+#'  \item{'custom'} {is a custom computation of phenotypes and fitness functions.
+#'  These functions will define the type of selection fitting particular case studies. The name of each user defined function should be introduced in the 'fun' parameter as a character vector with two elements e.g. c('phenotype', 'fitness').
+#'  Assuming a per-generation time step, the potential number of offspring produced by each individual depends on its phenotype \eqn{\omega = f(z)}, which in turn depends on the individual genotype and on the environment \eqn{z = g(G, E)}.
+#'  \eqn{G} is a numeric value determined by an individual’s genotype, representing the genetic value of the genotype. In the case of an additive genetic map, the genetic value of a genotype will be a breeding value. \eqn{E} represents the effect of the environment on phenotypic expression, and this enables the effects of plasticity on phenotypic expression to be captured.
+#'  The list of parameters 'param.z' and 'param.w' include all needed parameters for the custom 'phenotype' and 'fitness' functions. These lists should not include variables.
+#'  For the phenotype function, the variable genetic structure of individuals is already included as the object 'struct', which should also be the first argument of the custom phenotype function, followed by "...".
+#'  This means that all parameters used in the custom phenotype function are only included in 'param.z'. The custom phenotype function should return a matrix with two columns, named "z" and "sex".
+#'  The first column is the resulting phenotype value and the second column represents the assignation of sex to each individual. For the fitness function, the variable individual phenotype value, sex of individuals and the population size are already included in the environment.
+#'  The function should start with these three elements ("z","sex","n"), followed by "...". The user does not need to use all three of these variables. All parameters needed for the custom fitness function should be included in 'param.w'.
+#'  This function should return a vector 'w' with fitness values for the individuals (see Examples). }
 #' }
 #' The recombination between homologous chromosomes are either of type 'map' or 'average'. The first case needs a vector with the recombination rate (\eqn{\rho}) between neigbour loci of length equal to \eqn{nl - 1} (\eqn{nl}: number of loci). The probability of having a crossover (1) or not (0) is uniformly distributed at a rate defined by the value of \eqn{\rho} between loci
 #' (i.e. positions with a probability smaller than \eqn{\rho} recombine). The uniform distribution allows each position with the same values of \eqn{\rho} to have an equal chance of crossover across all iterations. There is no recombination between homologous chromosomes when \eqn{\rho = 0}, both loci are completely linked (e.g. within an inversion or situated close to centromeres), while with a value of \eqn{\rho = 0.5}, the recombination rate is completely random (i.e. both loci are very distant on the same chromosome or are located on different chromosomes).
@@ -530,10 +537,10 @@ newborns <- function(x, recombination, type){
 #' #  Type of evolution = "custom"  #
 #' ##################################
 #'
-#' ## We set a custom 'phenotype' and/or 'fitness' function. In this example
-#' ## the custom functions are very similar to the default ones.
+#' ## We set a custom 'phenotype' and 'fitness' function.
+#' ## In this example, the custom functions are very similar to the default 'additive' ones.
 #'
-#' phenotype <- function(struct, ...){
+#' phenotype2 <- function(struct, ...){
 #'  pop.struct <- struct[ , fitness.pos, ]
 #'  temp <- dim(pop.struct)
 #'  mat <- matrix(1:temp[2],temp[1],temp[2],byrow=TRUE)
@@ -549,7 +556,7 @@ newborns <- function(x, recombination, type){
 #'  return(cbind(z = z, sex = sex))
 #' }
 #'
-#' fitness <- function(z, sex, n, ...){
+#' fitness2 <- function(z, sex, n, ...){
 #'  ng <- n.loci
 #'  a <- b0
 #'  b <- b1
@@ -559,19 +566,16 @@ newborns <- function(x, recombination, type){
 #'  return(w)
 #' }
 #'
-#' ## We assign the new functions into the namespace
-#' assignInNamespace("phenotype",phenotype, ns="glads")
-#' assignInNamespace("fitness",fitness, ns="glads")
-#'
 #' set.seed(1) #setting the seed for reproducible random numbers
 #' pop<-evolve(list(start1), n.gens, "custom", "map", recom.map,
 #'            param.z =list(sex.ratio = sex.ratio, fitness.pos = fitness.pos,
 #'                          bvs = bvs, add.loci = add.loci, e.v = e.v),
-#'            param.w = list(b0 = b0, b1 = b1, b2 = b2, b3 = b3, d.v = d.v, n.loci = add.loci))
+#'            param.w = list(b0 = b0, b1 = b1, b2 = b2, b3 = b3, d.v = d.v, n.loci = add.loci),
+#'            fun=c("phenotype2", "fitness2"))
 #'
 #' }
 #' @export
-evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL) {
+evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL, fun=c(phenotype=NULL, fitness=NULL)) {
 
   npop<-length(x)
   struct <- x
@@ -612,7 +616,7 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'
       for (i in 1:time) {
         if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z[[i]], param.w[[i]])) })
+        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z[[i]], param.w[[i]], fun)) })
 
         out <- lapply(y, newborns, recombination = recombination, type = type)
 
@@ -641,7 +645,7 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'
       for (i in 1:time) {
         if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z[[i]], param.w[[i]])) })
+        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z[[i]], param.w[[i]], fun)) })
 
         out <- lapply(y, newborns, recombination = recombination, type = type)
 
