@@ -385,6 +385,7 @@ newborns <- function(x, recombination, type){
 #' @param mutation.rate A numerical value setting the mutation rate per site. It is currently restricted to biallelic SNPs (genetic structures with values 1 or 2). The default value is NULL.
 #' @param param.z A list with the parameter values for the function computing phenotypes. The list of parameters for each population should be included as a list of list (see Example)
 #' @param param.w A list with the parameter values for the fitness function. The list of parameters for each population should be included as a list of list (see Example)
+#' @param fun A character vector with the names of the custom phenotype and fitness functions. The default value is NULL, but it is required for the 'custom' type of evolution
 #' @details This function returns a list of populations composed of two-dimensional arrays that represents a pair of homologous chromosomes. Rows represent individuals and columns the different loci. Each element of the array is an integer defining the copy of a given allele at a given locus.
 #'
 #' Different types of evolution are available for simulations:

@@ -44,6 +44,8 @@ evolve(
 \item{param.z}{A list with the parameter values for the function computing phenotypes. The list of parameters for each population should be included as a list of list (see Example)}
 
 \item{param.w}{A list with the parameter values for the fitness function. The list of parameters for each population should be included as a list of list (see Example)}
+
+\item{fun}{A character vector with the names of the custom phenotype and fitness functions. The default value is NULL, but it is required for the 'custom' type of evolution}
 }
 \value{
 A list of objects of class \code{"struct"} or array.
