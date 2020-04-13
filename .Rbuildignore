@@ -5,6 +5,8 @@
 ^R/macs-interface\.R$
 ^R/plink-interface\.R$
 ^R-examples$
+^README.Rmd$
+^README_files$
 ^\./src/read-macs-output\.cpp$
 ^\./src/read-macs-output\.o$
 ^\./R/ignored_functions\.R$
