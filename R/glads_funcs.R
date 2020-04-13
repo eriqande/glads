@@ -438,10 +438,10 @@ newborns <- function(x, recombination, type){
 #' A value of \eqn{\rho < 0.5} means the loci are physically linked. The second case, when recombination is of type 'average', a numerical value with the average recombination rate per base pair should be supplied, the loci position and the size of the chromosome in megabase are also required. The crossover points are exponentially distributed as a Poisson process (see Example).
 #' @return A list of objects of class \code{"struct"} or array.
 #' @references
-#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2019).
-#' The multiple population genetic and demographic routes to islands of genomic divergence.
-#' \emph{bioRxiv}.
-#' \doi{10.1101/673483}.
+#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
+#' The many population genetic and demographic routes to islands of genomic divergence..
+#' \emph{Methods in Ecology and Evolution 11(1):6-21.}.
+#' \doi{10.1111/2041-210X.13324}.
 #' @seealso \code{\link{initial.struct}}
 #' @examples
 #' \dontrun{
