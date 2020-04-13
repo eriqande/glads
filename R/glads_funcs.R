@@ -576,7 +576,7 @@ newborns <- function(x, recombination, type){
 #'
 #' }
 #' @export
-evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL, fun=c(phenotype=NULL, fitness=NULL)) {
+evolve <- function(x, time, type = c("constant", "dynamic", "additive", "custom"), recombination = c("map", "average"), recom.rate, loci.pos = NULL, chromo_mb = NULL, init.sex = NULL, migration.rate = NULL, mutation.rate = NULL, param.z=NULL, param.w=NULL, fun=c(phenotype=NULL, fitness=NULL)) {
 
   npop<-length(x)
   struct <- x
@@ -585,7 +585,9 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", 'custom'
   if (recombination == "average" && (is.null(loci.pos) || is.null(chromo_mb))) stop("Loci position or size of the chromosome is missing with no default for 'average' recombination.", call.=F)
   if ((recombination == "map" && length(recom.rate) != (dim(x[[1]])[2] - 1)) || (recombination == "average" && length(recom.rate) != 1)) stop("Incorrect recombination rate for the type of recombination ('map' or 'average').", call.=F)
 
-  if (!is.null(mutation.rate)) {
+  if (type == "custom" && (is.character(fun) == FALSE || length(fun) != 2)) stop("One or both custom function names are missing or 'fun' is not well defined. 'fun' is a character vector of length 2, with the name of the phenotype and fitness functions e.g. c('phenotype', 'fitness').", call.=F)
+
+   if (!is.null(mutation.rate)) {
     if (sum(sapply(1:npop, function(i) { length(table(x[[i]])) != 2 })) != 0) {
       mutation.rate = NULL
       warning("Mutation rate is ignored for non-biallelic genetic structures. The genetic structure input should contains integers of values 1 or 2.", call.=F)
