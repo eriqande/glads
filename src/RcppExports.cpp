@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // rcpp_g2p_map
 NumericVector rcpp_g2p_map(IntegerVector G, IntegerVector dims, NumericMatrix bvs, double add_loci, double sex_ratio, double e_v);
 RcppExport SEXP _glads_rcpp_g2p_map(SEXP GSEXP, SEXP dimsSEXP, SEXP bvsSEXP, SEXP add_lociSEXP, SEXP sex_ratioSEXP, SEXP e_vSEXP) {
