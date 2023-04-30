@@ -15,5 +15,5 @@ Imports:
     Rcpp (>= 0.12.7),
     readr
 LinkingTo: Rcpp
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
