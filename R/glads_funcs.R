@@ -332,7 +332,7 @@ newborns <- function(x, recombination, type){
            zs <- phenotype(struct.fit, bvs, add.loci, sex.ratio, e.v)
            fit <- fitness(zs,dim(zs)[1], b0, b1, b2, b3, d.v, n.loci)
            z <- cbind(sex = zs[,"sex"], z = fit)
-          },
+         },
          custom = {
            zs <- do.call(fun[1], append(list(struct=struct), param.z))
            fit <- do.call(fun[2], append(list(z = zs[,"z"], sex = zs[,"sex"], n = dim(zs)[1]), param.w))
@@ -425,7 +425,7 @@ newborns <- function(x, recombination, type){
 #'      \item{add.loci:} {An integer with the total number of additive loci participating in the computation of phenotypes. This object should be included within a list in 'param.w'.}
 #'
 #'      The default fitness function (\eqn{\omega}) has the form:
-#'      \deqn{\omega = b_0  \exp^{ -\frac{1}{2} \left ( \frac{4z - b_1n_a}{b_2n_a} \right )^2} - b_3N + \varepsilon_d(0, \sigma_d )}
+#'      \deqn{\omega = b_0  \exp^{ -\frac{1}{2} \left ( \frac{z - b_1n_a}{b_2n_a} \right )^2} - b_3N + \varepsilon_d(0, \sigma_d )}
 #'      Where \eqn{n_a} is equal to 'add.loci', \eqn{N} is the population size and \eqn{\sigma_d} is equal to 'd.v'. The demographic variant \eqn{\varepsilon_d} is assumed to be stochastic and normally distributed, with a mean of 0 and standard variation 'd.v'.
 #'      This function returns a vector with the fitness value (\eqn{\omega}) of individuals.
 #'    }
@@ -587,7 +587,7 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", "custom"
 
   if (type == "custom" && (is.character(fun) == FALSE || length(fun) != 2)) stop("One or both custom function names are missing or 'fun' is not well defined. 'fun' is a character vector of length 2, with the name of the phenotype and fitness functions e.g. c('phenotype', 'fitness').", call.=F)
 
-   if (!is.null(mutation.rate)) {
+  if (!is.null(mutation.rate)) {
     if (sum(sapply(1:npop, function(i) { length(table(x[[i]])) != 2 })) != 0) {
       mutation.rate = NULL
       warning("Mutation rate is ignored for non-biallelic genetic structures. The genetic structure input should contains integers of values 1 or 2.", call.=F)
@@ -614,65 +614,65 @@ evolve <- function(x, time, type = c("constant", "dynamic", "additive", "custom"
   pb <- progress_bar$new(format = " Work in progress [:bar] :percent eta: :eta",total = time, clear = FALSE, width= 100)
 
   switch(recombination,
-    map = {
-      res <- list()
-      for (i in 1:time) {
-        if (i > 1) { init.sex <- NULL }
+         map = {
+           res <- list()
+           for (i in 1:time) {
+             if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z[[i]], param.w[[i]], fun)) })
+             y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos = NULL, chromo_mb = NULL, param.z[[i]], param.w[[i]], fun)) })
 
-        out <- lapply(y, newborns, recombination = recombination, type = type)
+             out <- lapply(y, newborns, recombination = recombination, type = type)
 
-        if (!is.null(migration.rate)) {
-          move <- combn(1:npop, 2)
+             if (!is.null(migration.rate)) {
+               move <- combn(1:npop, 2)
 
-          for (j in 1:ncol(move)) {
-            n1 <- move[1, j]
-            n2 <- move[2, j]
-            rate1to2 <- disp[n1, n2]
-            rate2to1 <- disp[n2, n1]
-            outd<-migrate(out[[n1]], out[[n2]], rate1to2, rate2to1)
-            out[[n1]]<-outd[[1]]
-            out[[n2]]<-outd[[2]]
-          }
-        }
+               for (j in 1:ncol(move)) {
+                 n1 <- move[1, j]
+                 n2 <- move[2, j]
+                 rate1to2 <- disp[n1, n2]
+                 rate2to1 <- disp[n2, n1]
+                 outd<-migrate(out[[n1]], out[[n2]], rate1to2, rate2to1)
+                 out[[n1]]<-outd[[1]]
+                 out[[n2]]<-outd[[2]]
+               }
+             }
 
-        struct<-out
+             struct<-out
 
-        if (i %% time==0) res<- struct
-        pb$tick()
-      }
-    },
-    average = {
-      res <- list()
-      for (i in 1:time) {
-        if (i > 1) { init.sex <- NULL }
+             if (i %% time==0) res<- struct
+             pb$tick()
+           }
+         },
+         average = {
+           res <- list()
+           for (i in 1:time) {
+             if (i > 1) { init.sex <- NULL }
 
-        y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z[[i]], param.w[[i]], fun)) })
+             y <- lapply(1:npop, function(i) { append(list(struct[[i]]), list(recom.rate, init.sex[[i]], mutation.rate, loci.pos, chromo_mb, param.z[[i]], param.w[[i]], fun)) })
 
-        out <- lapply(y, newborns, recombination = recombination, type = type)
+             out <- lapply(y, newborns, recombination = recombination, type = type)
 
-        if (!is.null(migration.rate)) {
-          move <- combn(1:npop, 2)
+             if (!is.null(migration.rate)) {
+               move <- combn(1:npop, 2)
 
-          for (j in 1:ncol(move)) {
-            n1 <- move[1, j]
-            n2 <- move[2, j]
-            rate1to2 <- disp[n1, n2]
-            rate2to1 <- disp[n2, n1]
-            outd<-migrate(out[[n1]], out[[n2]], rate1to2, rate2to1)
-            out[[n1]]<-outd[[1]]
-            out[[n2]]<-outd[[2]]
-          }
-        }
+               for (j in 1:ncol(move)) {
+                 n1 <- move[1, j]
+                 n2 <- move[2, j]
+                 rate1to2 <- disp[n1, n2]
+                 rate2to1 <- disp[n2, n1]
+                 outd<-migrate(out[[n1]], out[[n2]], rate1to2, rate2to1)
+                 out[[n1]]<-outd[[1]]
+                 out[[n2]]<-outd[[2]]
+               }
+             }
 
-        struct<-out
+             struct<-out
 
-        if (i %% time==0) res<- struct
-        pb$tick()
-      }
-    },
-    stop("Invalid recombination type. Current options are 'map' or 'average'")
+             if (i %% time==0) res<- struct
+             pb$tick()
+           }
+         },
+         stop("Invalid recombination type. Current options are 'map' or 'average'")
   )
   return(res)
 }
