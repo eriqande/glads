@@ -115,10 +115,10 @@ mutation <- function(G, mutation.rate){
 #' Where \eqn{n_a} is equal to 'add.loci', \eqn{N} is the population size and \eqn{\sigma_d} is equal to 'd.v'. The demographic variant \eqn{\varepsilon_d} is assumed to be stochastic and normally distributed, with a mean of 0 and standard variation 'd.v'.
 #' @return A vector with the fitness value (\eqn{\omega}) for each individual.
 #' @references
-#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2019).
+#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
 #' The multiple population genetic and demographic routes to islands of genomic divergence.
-#' \emph{bioRxiv}.
-#' \doi{10.1101/673483}.
+#' \emph{Methods in Ecology and Evolution}.
+#' \doi{10.1111/2041-210X.13324}.
 #' @seealso \code{\link{evolve}} \code{\link{phenotype}}
 #' @examples
 #' ## We first create a random population with 100 individuals and 10 loci
@@ -172,10 +172,10 @@ fitness <- function(z,N,b0,b1,b2,b3, d.v, add.loci){
 #' Where \eqn{n_a} is equal to 'add.loci' and \eqn{\sigma_e} is equal to 'e.v'. The environmental contribution \eqn{\varepsilon_e} is assumed to be stochastic and normally distributed, with a mean of 0 and standard variation 'e.v'.
 #' @return A data.frame with rows equal to the number of individuals and two columns ('sex' and 'z')
 #' @references
-#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2019).
+#' Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
 #' The multiple population genetic and demographic routes to islands of genomic divergence.
-#' \emph{bioRxiv}.
-#' \doi{10.1101/673483}.
+#' \emph{Methods in Ecology and Evolution}.
+#' \doi{10.1111/2041-210X.13324}.
 #' @seealso \code{\link{evolve}} \code{\link{fitness}}
 #' @examples
 #' ## We first create a random population with 100 individuals and 10 loci

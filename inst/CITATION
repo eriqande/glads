@@ -1,0 +1,11 @@
+bibentry(
+   bibtype = "Article",
+   title = "The multiple population genetic and demographic routes to islands of genomic divergence",
+   author = personList(as.person("Claudio S. Quilodrán"), person("Kristen Ruegg"), as.person("Ashley T. Sendell-Price"), as.person("Eric C. Anderson"), as.person("Tim Coulson"), as.person("Sonya M. Clegg")),
+   journal = "Methods in Ecology and Evolution",
+   volume = "11",
+   number = "1",
+   pages = "6--21",
+   year = 2020,
+   doi = "10.1111/2041-210X.13324"
+   )

@@ -46,10 +46,10 @@ e.v=0.01
 phenotype(G, bvs, nl, sex.ratio, e.v)
 }
 \references{
-Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2019).
+Quilodrán, C. S., Ruegg, K., Sendell-Price, A. T., Anderson, E., Coulson, T. and Clegg, S.  (2020).
 The multiple population genetic and demographic routes to islands of genomic divergence.
-\emph{bioRxiv}.
-\doi{10.1101/673483}.
+\emph{Methods in Ecology and Evolution}.
+\doi{10.1111/2041-210X.13324}.
 }
 \seealso{
 \code{\link{evolve}} \code{\link{fitness}}

@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 <<<<<<< HEAD
-^inst$
+^inst/bin$
 ^R/macs-interface\.R$
 ^R/plink-interface\.R$
 ^R-examples$

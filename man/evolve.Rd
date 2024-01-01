@@ -93,7 +93,7 @@ Different types of evolution are available for simulations:
      \item{add.loci:} {An integer with the total number of additive loci participating in the computation of phenotypes. This object should be included within a list in 'param.w'.}
 
      The default fitness function (\eqn{\omega}) has the form:
-     \deqn{\omega = b_0  \exp^{ -\frac{1}{2} \left ( \frac{4z - b_1n_a}{b_2n_a} \right )^2} - b_3N + \varepsilon_d(0, \sigma_d )}
+     \deqn{\omega = b_0  \exp^{ -\frac{1}{2} \left ( \frac{z - b_1n_a}{b_2n_a} \right )^2} - b_3N + \varepsilon_d(0, \sigma_d )}
      Where \eqn{n_a} is equal to 'add.loci', \eqn{N} is the population size and \eqn{\sigma_d} is equal to 'd.v'. The demographic variant \eqn{\varepsilon_d} is assumed to be stochastic and normally distributed, with a mean of 0 and standard variation 'd.v'.
      This function returns a vector with the fitness value (\eqn{\omega}) of individuals.
    }
