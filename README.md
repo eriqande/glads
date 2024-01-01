@@ -11,7 +11,7 @@ genotype-phenotype maps.
 It has been written by Claudio S. Quilodrán, Eric C. Anderson, and Tim
 Coulson. The details of it appear in a manuscript submitted to *Methods
 in Ecology and Evolution* entitled, “The multiple population genetic and
-demographic routes to islands of genomic divergence.”
+demographic routes to islands of genomic divergence.” More information about the R package 'glads' can be found [here](https://www.glads.app).
 
 To use it, you must:
 
